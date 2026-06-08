@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tuon.ILO ☕️📍
 
-## Getting Started
+**Tuon.ILO** is a community-driven civic technology platform designed to help students, freelancers, and remote workers discover, filter, and review the best study spaces and cafes. 
 
-First, run the development server:
+Built with a focus on fast geospatial querying and seamless user experience, the platform allows users to find locations based on critical amenities like free Wi-Fi, power outlet availability, and ambient noise levels.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Frontend:** Next.js (App Router), React, TypeScript
+* **Styling:** Tailwind CSS, shadcn/ui
+* **Mapping:** Mapbox GL JS (via `react-map-gl`)
+* **Backend & Database:** Supabase (PostgreSQL)
+* **Validation:** Zod
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Core Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Interactive Map Explorer:** Dynamic map interface visualizing approved study hubs.
+* **Granular Filtering:** Filter locations by `STUDY_HUB` or `CAFE`, Wi-Fi availability, and charging port access.
+* **Community Reviews:** Low-friction, anonymous review system tied to session IDs to prevent spam while encouraging honest feedback.
+* **Moderation Queue:** An admin-facing moderation layer where user-submitted locations must be verified before appearing on the public map.
 
-## Learn More
+## 🛠️ Local Development
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone [https://github.com/yourusername/tuon-ilo.git](https://github.com/yourusername/tuon-ilo.git)
