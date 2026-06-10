@@ -1,38 +1,353 @@
-## Setup your env.local first
+# Tuon.ILO — Project Documentation
 
-# System Architecture & Documentation
+> A community-driven civic technology platform for discovering study spaces and cafes in Iloilo City.
 
-## 1. Database Schema (Supabase / PostgreSQL)
-The application utilizes a relational database structure designed for fast geographic queries and aggregated rating calculations.
+---
 
-### `locations` Table
-The central repository for all map data.
-* `id` (UUID, Primary Key)
-* `name` (Text)
-* `type` (Enum: 'STUDY_HUB', 'CAFE')
-* `latitude` (Float)
-* `longitude` (Float)
-* `wifi_status` (Enum: 'FREE', 'PAID', 'NONE')
-* `charging_status` (Enum: 'FREE', 'PAID', 'NONE')
-* `is_approved` (Boolean, Default: False) - *Controls visibility on the frontend.*
+## Table of Contents
 
-### `reviews` Table
-Handles user feedback and dynamic rating aggregation.
-* `id` (UUID, Primary Key)
-* `location_id` (UUID, Foreign Key -> locations.id)
-* `rating` (Integer 1-5)
-* `comment` (Text)
-* `session_id` (Text) - *Used for rate-limiting anonymous submissions.*
+1. [Project Overview](#1-project-overview)
+2. [Tech Stack](#2-tech-stack)
+3. [Project Structure](#3-project-structure)
+4. [Environment Variables](#4-environment-variables)
+5. [Database Schema](#5-database-schema)
+6. [Features](#6-features)
+   - [Public-Facing Map](#61-public-facing-map)
+   - [Admin Dashboard](#62-admin-dashboard)
+   - [Review System](#63-review-system)
+   - [Moderation Queue](#64-moderation-queue)
+7. [Data Flow](#7-data-flow)
+8. [Admin Dashboard Routes](#8-admin-dashboard-routes)
+9. [Build & Development](#9-build--development)
+10. [Deployment](#10-deployment)
+11. [Future Improvements](#11-future-improvements)
 
-## 2. API & Data Flow
+---
 
-### The "Add Location" Moderation Flow
-To protect the database from malicious data injection, the platform utilizes a strict moderation pipeline:
-1. **Client-Side:** User submits a new location via a form.
-2. **Validation:** The data is validated client-side using `Zod` to ensure coordinates and text fields meet schema requirements.
-3. **Insertion:** Data is inserted into the `locations` table with `is_approved` automatically set to `false`.
-4. **Admin Verification:** The administrator reviews the pending location in the Supabase dashboard (or custom admin route). Upon verification, `is_approved` is toggled to `true`.
-5. **Client Fetch:** The Next.js frontend only fetches locations where `is_approved === true`, ensuring the live map remains clean.
+## 1. Project Overview
 
-## 3. Geospatial Rendering
-The application uses Mapbox via `react-map-gl`. Location coordinates fetched from Supabase are mapped to `<Marker>` components. State management holds the current bounding box of the map viewport, allowing the application to re-fetch or filter data efficiently as the user pans and zooms across the city.
+**Tuon.ILO** (from the Hiligaynon word *tuon*, meaning "to study") is a civic technology web platform that helps students, freelancers, and remote workers in Iloilo City find reliable places to study or work. Users can browse an interactive map, filter locations by amenities, read community reviews, and submit new spots for review.
+
+The name is styled after a local domain — `Tuon.ILO` — positioning it as a dedicated, city-specific directory.
+
+**Core problems it solves:**
+- Students don't know which cafes have reliable free Wi-Fi
+- No single resource lists study hubs with charging port availability
+- No community-driven review system exists for this niche in Iloilo
+
+---
+
+## 2. Tech Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend Framework | Next.js 14 (App Router) | Routing, SSR, API routes |
+| Language | TypeScript | Type safety across the codebase |
+| Styling | Tailwind CSS | Utility-first CSS |
+| UI Components | shadcn/ui | Pre-built accessible components |
+| Map | Mapbox GL JS via `react-map-gl` | Interactive map with custom pins |
+| Database | Supabase (PostgreSQL) | Data storage and real-time queries |
+| Validation | Zod | Schema validation for form submissions |
+| Icons | Lucide React | Consistent icon library |
+| Deployment | Vercel | Seamless Next.js hosting |
+
+---
+
+## 3. Project Structure
+
+```
+tuon-ilo/
+├── app/
+│   ├── page.tsx                  # Public map homepage
+│   ├── layout.tsx                # Root layout
+│   ├── admin/
+│   │   ├── page.tsx              # Admin login gate
+│   │   ├── dashboard/
+│   │   │   ├── page.tsx          # Admin overview
+│   │   │   ├── add/
+│   │   │   │   └── page.tsx      # Add new spot form
+│   │   │   ├── queue/
+│   │   │   │   └── page.tsx      # Pending submissions queue
+│   │   │   └── manage/
+│   │   │       └── page.tsx      # Edit/delete live spots
+├── components/
+│   ├── map/
+│   │   ├── MapView.tsx           # Main Mapbox map component
+│   │   ├── MapPin.tsx            # Individual map pin marker
+│   │   └── FilterBar.tsx         # Wi-Fi / outlet / type filters
+│   ├── location/
+│   │   ├── LocationCard.tsx      # Sidebar card for a selected spot
+│   │   ├── ReviewList.tsx        # List of reviews for a spot
+│   │   └── ReviewForm.tsx        # Anonymous review submission form
+│   ├── admin/
+│   │   ├── AddLocationForm.tsx   # Admin form to add a new spot
+│   │   ├── QueueItem.tsx         # Single pending submission card
+│   │   └── ManageTable.tsx       # Table of live spots with actions
+│   └── ui/                       # shadcn/ui auto-generated components
+├── lib/
+│   ├── supabase.ts               # Supabase client initialization
+│   ├── validations.ts            # Zod schemas for forms
+│   └── utils.ts                  # Shared utility functions
+├── types/
+│   └── index.ts                  # TypeScript interfaces and types
+├── .env.local                    # Environment variables (never commit)
+└── docs/
+    └── TUON_ILO_DOCS.md          # This file
+```
+
+---
+
+## 4. Environment Variables
+
+Create a `.env.local` file in the project root. **Never commit this file to GitHub.**
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_public_token
+ADMIN_PASSWORD=your_chosen_admin_password
+```
+
+Where to get these:
+- **Supabase URL & Anon Key** — Supabase dashboard → Project Settings → API
+- **Mapbox Token** — mapbox.com → Account → Access Tokens
+- **Admin Password** — a strong password you choose yourself; stored only in this file
+
+---
+
+## 5. Database Schema
+
+Run the following SQL in your **Supabase SQL Editor** to set up the database.
+
+### Enums
+
+```sql
+CREATE TYPE location_type AS ENUM ('STUDY_HUB', 'CAFE');
+CREATE TYPE amenity_status AS ENUM ('FREE', 'PAID', 'NONE');
+```
+
+### Locations Table
+
+The central table. Every map pin comes from here.
+
+```sql
+CREATE TABLE locations (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name             TEXT NOT NULL,
+  type             location_type NOT NULL,
+  latitude         FLOAT NOT NULL,
+  longitude        FLOAT NOT NULL,
+  wifi_status      amenity_status NOT NULL,
+  charging_status  amenity_status NOT NULL,
+  pricing_details  TEXT,
+  contact_info     TEXT,
+  is_approved      BOOLEAN DEFAULT FALSE,
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+| Column | Notes |
+|---|---|
+| `is_approved` | Defaults to `false`. Only `true` entries appear on the public map. Admin flips this to `true` after review. |
+| `type` | Either `STUDY_HUB` (dedicated study space) or `CAFE` (coffee shop with study-friendly setup) |
+| `wifi_status` | `FREE`, `PAID`, or `NONE` |
+| `charging_status` | `FREE`, `PAID`, or `NONE` |
+
+### Reviews Table
+
+User-submitted ratings and comments, linked to a location.
+
+```sql
+CREATE TABLE reviews (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  location_id  UUID REFERENCES locations(id) ON DELETE CASCADE,
+  rating       INTEGER CHECK (rating >= 1 AND rating <= 5),
+  comment      TEXT,
+  session_id   TEXT NOT NULL,
+  created_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+| Column | Notes |
+|---|---|
+| `session_id` | A browser-generated ID stored in localStorage. Used to prevent the same user from submitting multiple reviews for the same spot. |
+| `rating` | Integer between 1 and 5. Average rating is **computed dynamically** via a SQL aggregation query — it is never stored as a column. |
+
+### Mock Data (for local development)
+
+```sql
+INSERT INTO locations (name, type, latitude, longitude, wifi_status, charging_status, pricing_details, is_approved)
+VALUES 
+  ('Kape Tambayan', 'CAFE', 10.9575, 123.3086, 'FREE', 'PAID', 'Must buy a drink', TRUE),
+  ('Focus Study Hub', 'STUDY_HUB', 10.9580, 123.3100, 'FREE', 'FREE', '₱50/hr', TRUE),
+  ('Night Owl Roasters', 'CAFE', 10.9560, 123.3050, 'PAID', 'NONE', 'Menu items ₱100–200', TRUE);
+```
+
+---
+
+## 6. Features
+
+### 6.1 Public-Facing Map
+
+- Interactive Mapbox map centered on Iloilo City
+- Color-coded pins: one color for `CAFE`, another for `STUDY_HUB`
+- Clicking a pin opens a sidebar card showing:
+  - Name, type, pricing details, contact info
+  - Wi-Fi and charging status badges
+  - Average star rating (computed from reviews)
+  - List of community reviews
+  - "Leave a review" form
+- Filter bar at the top to filter by:
+  - Location type (`CAFE` / `STUDY_HUB`)
+  - Wi-Fi status (`FREE` / `PAID` / `NONE`)
+  - Charging status (`FREE` / `PAID` / `NONE`)
+- "Submit a spot" button opens a form for public submissions (lands in moderation queue)
+- No login required for any of the above
+
+### 6.2 Admin Dashboard
+
+Accessible at `/admin`. Protected by a password check against `ADMIN_PASSWORD` in `.env.local`.
+
+**Add a Spot (`/admin/dashboard/add`)**
+- Full form with all location fields
+- Submission auto-sets `is_approved = true` — goes live on the map immediately
+- No moderation queue step for admin-added spots
+
+**Pending Queue (`/admin/dashboard/queue`)**
+- Lists all locations where `is_approved = false`
+- Each entry shows submitted data for review
+- **Approve** button: sets `is_approved = true`, pin appears on map
+- **Reject** button: deletes the record permanently
+
+**Manage Spots (`/admin/dashboard/manage`)**
+- Table of all live (`is_approved = true`) locations
+- Edit button: opens pre-filled form to update any field
+- Delete button: permanently removes the location and all its reviews (cascades via foreign key)
+
+### 6.3 Review System
+
+- Anyone can leave a review without logging in
+- A `session_id` is generated on first visit and stored in the browser
+- Before submitting, the app checks if a review from this `session_id` already exists for that `location_id` — if yes, the form is blocked with a "You've already reviewed this place" message
+- Average rating is calculated with:
+
+```sql
+SELECT AVG(rating) FROM reviews WHERE location_id = $1;
+```
+
+- This runs every time a location card is opened — always reflects the latest reviews
+
+### 6.4 Moderation Queue
+
+All public spot submissions go into the queue with `is_approved = false`. This protects the live map from:
+- Spam or fake locations
+- Incorrect coordinates
+- Duplicate entries
+- Malicious or irrelevant submissions
+
+Only the admin can promote a submission to live. The admin can also add spots directly, bypassing the queue entirely.
+
+---
+
+## 7. Data Flow
+
+### Public user views the map
+```
+Browser → Next.js page → Supabase query (WHERE is_approved = true) → Mapbox renders pins
+```
+
+### Public user submits a spot
+```
+Browser form → Zod validation → Supabase INSERT (is_approved = false) → Sits in queue
+```
+
+### Public user leaves a review
+```
+Browser → Check session_id against reviews table → If no duplicate → INSERT into reviews
+```
+
+### Admin approves a spot
+```
+Admin dashboard → Supabase UPDATE SET is_approved = true → Pin appears on public map
+```
+
+### Average rating is displayed
+```
+Location card opens → Supabase SELECT AVG(rating) WHERE location_id = X → Rendered in card
+```
+
+---
+
+## 8. Admin Dashboard Routes
+
+| Route | Purpose | Auth Required |
+|---|---|---|
+| `/admin` | Password login gate | No |
+| `/admin/dashboard` | Overview and navigation | Yes |
+| `/admin/dashboard/add` | Add a new spot (auto-approved) | Yes |
+| `/admin/dashboard/queue` | Review pending submissions | Yes |
+| `/admin/dashboard/manage` | Edit or delete live spots | Yes |
+
+**Auth implementation note:** This project uses a simple password check for the admin — not a full auth system. The password is stored in `.env.local` as `ADMIN_PASSWORD` and checked server-side in a Next.js Route Handler. A session cookie is set on success. This is sufficient for a solo-admin civic tech project.
+
+---
+
+## 9. Build & Development
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Run development server
+```bash
+npm run dev
+```
+
+### Build for production
+```bash
+npm run build
+```
+
+### Key scripts
+```bash
+npm run dev       # Local dev at localhost:3000
+npm run build     # Production build
+npm run start     # Start production server locally
+npm run lint      # Run ESLint
+```
+
+---
+
+## 10. Deployment
+
+This project is deployed on **Vercel**.
+
+1. Push your repo to GitHub
+2. Go to [vercel.com](https://vercel.com) and import the `tuon-ilo` repository
+3. In Vercel's project settings, add all four environment variables from `.env.local`
+4. Deploy — Vercel auto-detects Next.js and handles the build
+
+Every `git push` to `main` triggers an automatic redeployment.
+
+---
+
+## 11. Future Improvements
+
+These are features not in the initial build but worth adding later:
+
+| Feature | Description |
+|---|---|
+| Photo uploads | Allow users or admin to attach photos to a location |
+| Opening hours | Add an `hours` field and show "Open now" / "Closed" status |
+| Noise level tag | Let users tag a spot as Quiet / Moderate / Lively |
+| Admin analytics | Simple dashboard showing total spots, reviews per week, top-rated locations |
+| Email notifications | Notify admin via email when a new spot is submitted |
+| PostGIS radius search | "Find spots within 1km of me" using GPS + Supabase PostGIS extension |
+| Report a review | Let users flag suspicious or spam reviews for admin removal |
+| Mobile app | React Native version using the same Supabase backend |
+
+---
+
+*Last updated: June 2026*
+*Author: Tuon.ILO project*
