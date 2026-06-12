@@ -1,6 +1,6 @@
 # Tuon.ILO ☕️📍
 
-**Tuon.ILO** is a community-driven civic technology platform designed to help students, freelancers, and remote workers discover, filter, and review the best study spaces and cafes. 
+**Tuon.ILO** is a community-driven civic technology platform designed to help students, freelancers, and remote workers discover, filter, and review the best study spaces and cafes in Iloilo. 
 
 Built with a focus on fast geospatial querying and seamless user experience, the platform allows users to find locations based on critical amenities like free Wi-Fi, power outlet availability, and ambient noise levels.
 
