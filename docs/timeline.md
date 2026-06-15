@@ -74,8 +74,9 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 **Goal:** Admin can add a new location that goes live on the map immediately.
 
 - [ ] Create `components/admin/AddLocationForm.tsx`
-  - Fields: Name, Type (CAFE / STUDY_HUB), Latitude, Longitude, Wi-Fi Status, Charging Status, Pricing Details, Contact Info
-  - Use shadcn `Input`, `Select`, and `Button` components
+  - Fields: Name, Type (CAFE / STUDY_HUB), Latitude, Longitude, Wi-Fi Status, Charging Status, Pricing Details, Contact Info, Image URL, Facebook URL, Instagram URL, Google Maps URL, Noise Level, Is 24 Hours, Opening Time, Closing Time
+  - Show/hide opening and closing time fields based on the `is_24_hours` toggle
+  - Use shadcn `Input`, `Select`, `Switch`, and `Button` components
   - Validate with Zod schema on submit
 - [ ] Create `app/admin/dashboard/add/page.tsx` — renders the form
 - [ ] On valid submit, run a Supabase INSERT with `is_approved: true`
@@ -173,7 +174,10 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 - [ ] Add `onClick` to each `<Marker>` — sets a `selectedLocation` state
 - [ ] Create `components/location/LocationCard.tsx`
-  - Shows: Name, type badge, Wi-Fi badge, Charging badge, pricing details, contact info
+  - Shows: Name, type badge, Wi-Fi badge, Charging badge, Noise Level badge, pricing details
+  - Shows location photo if `image_url` is present
+  - Shows opening hours or "Open 24 hours" based on `is_24_hours`
+  - Shows icon links to Facebook, Instagram, and Google Maps if URLs are present
   - Fetches and displays average rating: `SELECT AVG(rating) FROM reviews WHERE location_id = $1`
   - Renders star display (e.g. ★★★☆☆)
   - Close button to deselect
@@ -189,13 +193,13 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 **Goal:** Users can filter visible pins by type, Wi-Fi status, and charging status.
 
 - [ ] Create `components/map/FilterBar.tsx`
-  - Three filter groups: Type, Wi-Fi, Charging
+  - Four filter groups: Type, Wi-Fi, Charging, Noise Level
   - Each option is a toggle button (shadcn `Badge` or `Button` variant)
   - Active filter is visually highlighted
 - [ ] Lift filter state to `app/page.tsx`
 - [ ] Apply filters client-side — filter the locations array before passing to `MapView`
 - [ ] "Clear filters" button resets all filters
-- [ ] Test: toggle Wi-Fi FREE → only FREE spots show pins
+- [ ] Test: toggle Noise Level QUIET → only quiet spots show pins
 - [ ] Push to GitHub: `feat: filter bar for map pins`
 
 ---

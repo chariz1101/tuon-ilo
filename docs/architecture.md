@@ -124,6 +124,7 @@ Run the following SQL in your **Supabase SQL Editor** to set up the database.
 ```sql
 CREATE TYPE location_type AS ENUM ('STUDY_HUB', 'CAFE');
 CREATE TYPE amenity_status AS ENUM ('FREE', 'PAID', 'NONE');
+CREATE TYPE noise_level AS ENUM ('QUIET', 'MODERATE', 'LIVELY');
 ```
 
 ### Locations Table
@@ -141,6 +142,14 @@ CREATE TABLE locations (
   charging_status  amenity_status NOT NULL,
   pricing_details  TEXT,
   contact_info     TEXT,
+  image_url        TEXT,
+  facebook_url     TEXT,
+  instagram_url    TEXT,
+  gmaps_url        TEXT,
+  is_24_hours      BOOLEAN DEFAULT FALSE,
+  opening_time     TIME,
+  closing_time     TIME,
+  noise_level      noise_level,
   is_approved      BOOLEAN DEFAULT FALSE,
   created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -152,6 +161,14 @@ CREATE TABLE locations (
 | `type` | Either `STUDY_HUB` (dedicated study space) or `CAFE` (coffee shop with study-friendly setup) |
 | `wifi_status` | `FREE`, `PAID`, or `NONE` |
 | `charging_status` | `FREE`, `PAID`, or `NONE` |
+| `image_url` | URL to a photo of the location, stored via Supabase Storage |
+| `facebook_url` | Facebook page link — most Iloilo cafes use FB as their primary online presence |
+| `instagram_url` | Instagram profile link |
+| `gmaps_url` | Google Maps link so users can get directions directly |
+| `is_24_hours` | If `true`, opening/closing time is ignored and "Open 24 hours" is displayed |
+| `opening_time` | Stored as `TIME` e.g. `08:00:00` |
+| `closing_time` | Stored as `TIME` e.g. `22:00:00` |
+| `noise_level` | `QUIET`, `MODERATE`, or `LIVELY` — useful filter for students needing silence |
 
 ### Reviews Table
 
@@ -176,11 +193,11 @@ CREATE TABLE reviews (
 ### Mock Data (for local development)
 
 ```sql
-INSERT INTO locations (name, type, latitude, longitude, wifi_status, charging_status, pricing_details, is_approved)
+INSERT INTO locations (name, type, latitude, longitude, wifi_status, charging_status, pricing_details, is_24_hours, opening_time, closing_time, noise_level, is_approved)
 VALUES 
-  ('Kape Tambayan', 'CAFE', 10.9575, 123.3086, 'FREE', 'PAID', 'Must buy a drink', TRUE),
-  ('Focus Study Hub', 'STUDY_HUB', 10.9580, 123.3100, 'FREE', 'FREE', '₱50/hr', TRUE),
-  ('Night Owl Roasters', 'CAFE', 10.9560, 123.3050, 'PAID', 'NONE', 'Menu items ₱100–200', TRUE);
+  ('Kape Tambayan', 'CAFE', 10.9575, 123.3086, 'FREE', 'PAID', 'Must buy a drink', FALSE, '07:00:00', '22:00:00', 'MODERATE', TRUE),
+  ('Focus Study Hub', 'STUDY_HUB', 10.9580, 123.3100, 'FREE', 'FREE', '₱50/hr', FALSE, '08:00:00', '23:00:00', 'QUIET', TRUE),
+  ('Night Owl Roasters', 'CAFE', 10.9560, 123.3050, 'PAID', 'NONE', 'Menu items ₱100–200', TRUE, NULL, NULL, 'LIVELY', TRUE);
 ```
 
 ---
@@ -193,7 +210,11 @@ VALUES
 - Color-coded pins: one color for `CAFE`, another for `STUDY_HUB`
 - Clicking a pin opens a sidebar card showing:
   - Name, type, pricing details, contact info
+  - Photo of the location (if uploaded)
   - Wi-Fi and charging status badges
+  - Noise level badge (Quiet / Moderate / Lively)
+  - Opening hours or "Open 24 hours"
+  - Links to Facebook, Instagram, and Google Maps
   - Average star rating (computed from reviews)
   - List of community reviews
   - "Leave a review" form
@@ -201,6 +222,7 @@ VALUES
   - Location type (`CAFE` / `STUDY_HUB`)
   - Wi-Fi status (`FREE` / `PAID` / `NONE`)
   - Charging status (`FREE` / `PAID` / `NONE`)
+  - Noise level (`QUIET` / `MODERATE` / `LIVELY`)
 - "Submit a spot" button opens a form for public submissions (lands in moderation queue)
 - No login required for any of the above
 
@@ -338,16 +360,14 @@ These are features not in the initial build but worth adding later:
 
 | Feature | Description |
 |---|---|
-| Photo uploads | Allow users or admin to attach photos to a location |
-| Opening hours | Add an `hours` field and show "Open now" / "Closed" status |
-| Noise level tag | Let users tag a spot as Quiet / Moderate / Lively |
 | Admin analytics | Simple dashboard showing total spots, reviews per week, top-rated locations |
 | Email notifications | Notify admin via email when a new spot is submitted |
 | PostGIS radius search | "Find spots within 1km of me" using GPS + Supabase PostGIS extension |
 | Report a review | Let users flag suspicious or spam reviews for admin removal |
+| "Open now" filter | Filter the map to only show spots currently open based on their hours |
 | Mobile app | React Native version using the same Supabase backend |
 
 ---
 
-*Last updated: June 2026*
+*Last updated: June 2026 — expanded schema with image, social links, hours, and noise level*
 *Author: Tuon.ILO project*
