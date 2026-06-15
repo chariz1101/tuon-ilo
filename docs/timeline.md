@@ -31,8 +31,8 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Create `.env.local` with Supabase URL, anon key, Mapbox token, and admin password
 - [/] Create `lib/supabase.ts` — initialize and export the Supabase client
 - [/] Create `types/index.ts` — define `Location` and `Review` TypeScript interfaces
-- [ ] Confirm Supabase connection works (write a quick test query in a page, log result to console)
-- [ ] Push to GitHub: `feat: supabase setup and schema`
+- [/] Confirm Supabase connection works (write a quick test query in a page, log result to console)
+- [/] Push to GitHub: `feat: supabase setup and schema`
 
 ---
 
