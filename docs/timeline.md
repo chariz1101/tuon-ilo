@@ -24,11 +24,11 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Get the app running locally and connected to the database.
 
-- [ ] Confirm Next.js project runs (`npm run dev` shows default page)
-- [ ] Create Supabase project named `tuon-ilo`
-- [ ] Run the SQL schema in Supabase SQL Editor (enums + locations + reviews tables)
-- [ ] Insert the 3 mock data rows for testing
-- [ ] Create `.env.local` with Supabase URL, anon key, Mapbox token, and admin password
+- [/] Confirm Next.js project runs (`npm run dev` shows default page)
+- [/] Create Supabase project named `tuon-ilo`
+- [/] Run the SQL schema in Supabase SQL Editor (enums + locations + reviews tables)
+- [/] Insert the 3 mock data rows for testing
+- [/] Create `.env.local` with Supabase URL, anon key, Mapbox token, and admin password
 - [ ] Create `lib/supabase.ts` — initialize and export the Supabase client
 - [ ] Create `types/index.ts` — define `Location` and `Review` TypeScript interfaces
 - [ ] Confirm Supabase connection works (write a quick test query in a page, log result to console)
