@@ -43,8 +43,8 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Create the full folder structure as defined in the docs (`app/`, `components/`, `lib/`, `types/`)
 - [/] Create `lib/validations.ts` — write Zod schemas for the location form and review form
 - [/] Create `lib/utils.ts` — add helper functions (e.g. format average rating, badge color logic)
-- [ ] Initialize shadcn/ui (`npx shadcn-ui@latest init`)
-- [ ] Install and configure shadcn components you'll need: `Button`, `Input`, `Label`, `Select`, `Badge`, `Card`, `Table`
+- [/] Initialize shadcn/ui (`npx shadcn@latest init`)
+- [/] Install and configure shadcn components you'll need: `Button`, `Switch`, `Input`, `Label`, `Select`, `Badge`, `Card`, `Table`
 - [ ] Set up a root layout in `app/layout.tsx` with a basic font and background color
 - [ ] Push to GitHub: `feat: project structure and shared utilities`
 
