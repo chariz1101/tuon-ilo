@@ -45,7 +45,7 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Create `lib/utils.ts` — add helper functions (e.g. format average rating, badge color logic)
 - [/] Initialize shadcn/ui (`npx shadcn@latest init`)
 - [/] Install and configure shadcn components you'll need: `Button`, `Switch`, `Input`, `Label`, `Select`, `Badge`, `Card`, `Table`
-- [ ] Set up a root layout in `app/layout.tsx` with a basic font and background color
+- [/] Set up a root layout in `app/layout.tsx` with a basic font and background color
 - [ ] Push to GitHub: `feat: project structure and shared utilities`
 
 ---
