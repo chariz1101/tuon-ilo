@@ -60,8 +60,9 @@ tuon-ilo/
 ├── app/
 │   ├── page.tsx                  # Public map homepage
 │   ├── layout.tsx                # Root layout
+│   ├── globals.css               # Global styles
 │   ├── admin/
-│   │   ├── page.tsx              # Admin login gate
+│   │   ├── page.tsx              # Admin login page UI
 │   │   ├── dashboard/
 │   │   │   ├── page.tsx          # Admin overview
 │   │   │   ├── add/
@@ -70,29 +71,50 @@ tuon-ilo/
 │   │   │   │   └── page.tsx      # Pending submissions queue
 │   │   │   └── manage/
 │   │   │       └── page.tsx      # Edit/delete live spots
+│   └── api/
+│       └── admin/
+│           ├── login/
+│           │   └── route.ts      # Validates password, sets admin_session cookie
+│           ├── approve/
+│           │   └── route.ts      # Approves a pending location
+│           ├── reject/
+│           │   └── route.ts      # Deletes a pending location
+│           ├── update/
+│           │   └── route.ts      # Updates a live location's fields
+│           └── delete/
+│               └── route.ts      # Deletes a live location
 ├── components/
 │   ├── map/
 │   │   ├── MapView.tsx           # Main Mapbox map component
 │   │   ├── MapPin.tsx            # Individual map pin marker
-│   │   └── FilterBar.tsx         # Wi-Fi / outlet / type filters
+│   │   └── FilterBar.tsx         # Wi-Fi / outlet / type / noise filters
 │   ├── location/
 │   │   ├── LocationCard.tsx      # Sidebar card for a selected spot
 │   │   ├── ReviewList.tsx        # List of reviews for a spot
 │   │   └── ReviewForm.tsx        # Anonymous review submission form
 │   ├── admin/
-│   │   ├── AddLocationForm.tsx   # Admin form to add a new spot
+│   │   ├── AddLocationForm.tsx   # Admin form to add/edit a spot
 │   │   ├── QueueItem.tsx         # Single pending submission card
 │   │   └── ManageTable.tsx       # Table of live spots with actions
 │   └── ui/                       # shadcn/ui auto-generated components
+│       ├── button.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── select.tsx
+│       ├── badge.tsx
+│       ├── card.tsx
+│       ├── table.tsx
+│       └── switch.tsx
 ├── lib/
 │   ├── supabase.ts               # Supabase client initialization
 │   ├── validations.ts            # Zod schemas for forms
-│   └── utils.ts                  # Shared utility functions
+│   └── utils.ts                  # Shared utility functions (ratings, badges, hours)
 ├── types/
 │   └── index.ts                  # TypeScript interfaces and types
 ├── .env.local                    # Environment variables (never commit)
 └── docs/
-    └── TUON_ILO_DOCS.md          # This file
+    ├── TUON_ILO_DOCS.md          # This file
+    └── TUON_ILO_TIMELINE.md      # 2-week build timeline
 ```
 
 ---

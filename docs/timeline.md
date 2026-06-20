@@ -54,8 +54,8 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Build the `/admin` password login page so the dashboard is protected.
 
-- [ ] Create `app/admin/page.tsx` — the login page UI (password input + submit button)
-- [ ] Create a Next.js Route Handler `app/api/admin/login/route.ts`
+- [/] Create `app/admin/page.tsx` — the login page UI (password input + submit button)
+- [/] Create a Next.js Route Handler `app/api/admin/login/route.ts`
   - Accepts POST with `{ password }`
   - Compares against `process.env.ADMIN_PASSWORD`
   - On success: sets an `admin_session` cookie and returns 200
