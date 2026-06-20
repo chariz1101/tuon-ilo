@@ -60,9 +60,9 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
   - Compares against `process.env.ADMIN_PASSWORD`
   - On success: sets an `admin_session` cookie and returns 200
   - On failure: returns 401
-- [ ] On the login page, call the API route on form submit
-- [ ] On success, redirect to `/admin/dashboard`
-- [ ] Create `app/admin/dashboard/page.tsx` — a simple placeholder overview page for now
+- [/] On the login page, call the API route on form submit
+- [/] On success, redirect to `/admin/dashboard`
+- [/] Create `app/admin/dashboard/page.tsx` — a simple placeholder overview page for now
 - [ ] Add middleware or a server-side check so `/admin/dashboard/*` redirects to `/admin` if the cookie is missing
 - [ ] Test: correct password → dashboard. Wrong password → error message shown.
 - [ ] Push to GitHub: `feat: admin auth gate with cookie session`

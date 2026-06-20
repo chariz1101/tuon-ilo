@@ -57,6 +57,7 @@ The name is styled after a local domain — `Tuon.ILO` — positioning it as a d
 
 ```
 tuon-ilo/
+├── middleware.ts
 ├── app/
 │   ├── page.tsx                  # Public map homepage
 │   ├── layout.tsx                # Root layout
