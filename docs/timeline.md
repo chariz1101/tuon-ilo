@@ -83,7 +83,7 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Show a success message and reset the form after submission
 - [/] Add a navigation bar to the admin dashboard linking to: Add Spot / Queue / Manage
 - [/] Test: fill form → submit → check Supabase table for new row with `is_approved = true`
-- [/] Push to GitHub: `feat: admin add spot form`
+- [/] Push to GitHub: `feat: admin add spot form` 
 
 ---
 
