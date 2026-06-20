@@ -58,7 +58,7 @@ export const locationSchema = z
 
     noise_level: noiseLevelEnum.optional(),
 
-    is_24_hours: z.boolean().default(false),
+    is_24_hours: z.boolean(),
     opening_time: timeStringSchema.optional().or(z.literal('')),
     closing_time: timeStringSchema.optional().or(z.literal('')),
   })

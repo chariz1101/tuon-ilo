@@ -63,9 +63,9 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] On the login page, call the API route on form submit
 - [/] On success, redirect to `/admin/dashboard`
 - [/] Create `app/admin/dashboard/page.tsx` — a simple placeholder overview page for now
-- [ ] Add middleware or a server-side check so `/admin/dashboard/*` redirects to `/admin` if the cookie is missing
-- [ ] Test: correct password → dashboard. Wrong password → error message shown.
-- [ ] Push to GitHub: `feat: admin auth gate with cookie session`
+- [/] Add middleware or a server-side check so `/admin/dashboard/*` redirects to `/admin` if the cookie is missing
+- [/] Test: correct password → dashboard. Wrong password → error message shown.
+- [/] Push to GitHub: `feat: admin auth gate with cookie session`
 
 ---
 
@@ -73,17 +73,17 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Admin can add a new location that goes live on the map immediately.
 
-- [ ] Create `components/admin/AddLocationForm.tsx`
+- [/] Create `components/admin/AddLocationForm.tsx`
   - Fields: Name, Type (CAFE / STUDY_HUB), Latitude, Longitude, Wi-Fi Status, Charging Status, Pricing Details, Contact Info, Image URL, Facebook URL, Instagram URL, Google Maps URL, Noise Level, Is 24 Hours, Opening Time, Closing Time
   - Show/hide opening and closing time fields based on the `is_24_hours` toggle
   - Use shadcn `Input`, `Select`, `Switch`, and `Button` components
   - Validate with Zod schema on submit
-- [ ] Create `app/admin/dashboard/add/page.tsx` — renders the form
-- [ ] On valid submit, run a Supabase INSERT with `is_approved: true`
-- [ ] Show a success message and reset the form after submission
-- [ ] Add a navigation bar to the admin dashboard linking to: Add Spot / Queue / Manage
-- [ ] Test: fill form → submit → check Supabase table for new row with `is_approved = true`
-- [ ] Push to GitHub: `feat: admin add spot form`
+- [/] Create `app/admin/dashboard/add/page.tsx` — renders the form
+- [/] On valid submit, run a Supabase INSERT with `is_approved: true`
+- [/] Show a success message and reset the form after submission
+- [/] Add a navigation bar to the admin dashboard linking to: Add Spot / Queue / Manage
+- [/] Test: fill form → submit → check Supabase table for new row with `is_approved = true`
+- [/] Push to GitHub: `feat: admin add spot form`
 
 ---
 

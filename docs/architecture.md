@@ -213,6 +213,41 @@ CREATE TABLE reviews (
 | `session_id` | A browser-generated ID stored in localStorage. Used to prevent the same user from submitting multiple reviews for the same spot. |
 | `rating` | Integer between 1 and 5. Average rating is **computed dynamically** via a SQL aggregation query — it is never stored as a column. |
 
+### Row Level Security (RLS) Policies
+
+Supabase enables RLS by default with zero policies, which blocks all access until policies are added. Run this in the Supabase SQL Editor:
+
+```sql
+ALTER TABLE locations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view approved locations"
+ON locations FOR SELECT
+USING (is_approved = true);
+
+CREATE POLICY "Anyone can insert a location"
+ON locations FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Anyone can update a location"
+ON locations FOR UPDATE
+USING (true);
+
+CREATE POLICY "Anyone can delete a location"
+ON locations FOR DELETE
+USING (true);
+
+CREATE POLICY "Public can view reviews"
+ON reviews FOR SELECT
+USING (true);
+
+CREATE POLICY "Anyone can insert a review"
+ON reviews FOR INSERT
+WITH CHECK (true);
+```
+
+⚠️ See the [known limitation note](#8-admin-dashboard-routes) above the Admin Dashboard Routes table — these policies are intentionally open since admin checks happen in Next.js middleware, not in Supabase.
+
 ### Mock Data (for local development)
 
 ```sql
@@ -335,6 +370,10 @@ Location card opens → Supabase SELECT AVG(rating) WHERE location_id = X → Re
 
 **Auth implementation note:** This project uses a simple password check for the admin — not a full auth system. The password is stored in `.env.local` as `ADMIN_PASSWORD` and checked server-side in a Next.js Route Handler. A session cookie is set on success. This is sufficient for a solo-admin civic tech project.
 
+**⚠️ Known limitation — Row Level Security (RLS):** Supabase has no concept of "admin" in this project. The admin login check exists only in Next.js middleware, not in the database itself. To allow the admin dashboard to insert, update, and delete rows in `locations`, the RLS policies on that table are set to `USING (true)` — meaning they are open to **anyone** who has the Supabase anon key, not just authenticated admins. In practice this means a technically savvy person could call the Supabase API directly (bypassing `/admin` entirely) and add, edit, or delete locations.
+
+This is an acceptable tradeoff for a small, solo-admin civic tech project shipped quickly, but it is a real security gap, not just a theoretical one. The proper fix is listed under [Future Improvements](#11-future-improvements): migrate to **Supabase Auth** for the admin account, and scope the `locations` INSERT/UPDATE/DELETE policies to check `auth.uid()` against a known admin user ID instead of allowing all requests.
+
 ---
 
 ## 9. Build & Development
@@ -383,6 +422,7 @@ These are features not in the initial build but worth adding later:
 
 | Feature | Description |
 |---|---|
+| **Supabase Auth for admin** | Replace the password-cookie admin check with real Supabase Auth, and scope `locations` RLS policies to `auth.uid()` instead of `USING (true)` — closes the current security gap |
 | Admin analytics | Simple dashboard showing total spots, reviews per week, top-rated locations |
 | Email notifications | Notify admin via email when a new spot is submitted |
 | PostGIS radius search | "Find spots within 1km of me" using GPS + Supabase PostGIS extension |

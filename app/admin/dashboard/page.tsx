@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function AdminDashboardPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
+    <main className="px-6 py-10">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-1 text-2xl font-semibold">Admin Dashboard</h1>
         <p className="mb-8 text-slate-600">
