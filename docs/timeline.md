@@ -106,7 +106,7 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] After approve or reject, refresh the queue list
 - [/] Show "No pending submissions" state when queue is empty
 - [/] Test: insert a row manually with `is_approved = false` → approve it → confirm it disappears from queue
-- [ ] Push to GitHub: `feat: moderation queue with approve and reject`
+- [/] Push to GitHub: `feat: moderation queue with approve and reject`
 
 ---
 
