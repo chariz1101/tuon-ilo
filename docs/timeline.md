@@ -97,14 +97,14 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Create `components/admin/QueueItem.tsx`
   - Shows all submitted fields
   - Two buttons: **Approve** and **Reject**
-- [ ] Create Route Handler `app/api/admin/approve/route.ts`
+- [/] Create Route Handler `app/api/admin/approve/route.ts`
   - Accepts POST with `{ id }`
   - Runs `UPDATE locations SET is_approved = true WHERE id = $1`
-- [ ] Create Route Handler `app/api/admin/reject/route.ts`
+- [/] Create Route Handler `app/api/admin/reject/route.ts`
   - Accepts POST with `{ id }`
   - Runs `DELETE FROM locations WHERE id = $1`
-- [ ] After approve or reject, refresh the queue list
-- [ ] Show "No pending submissions" state when queue is empty
+- [/] After approve or reject, refresh the queue list
+- [/] Show "No pending submissions" state when queue is empty
 - [ ] Test: insert a row manually with `is_approved = false` → approve it → confirm it disappears from queue
 - [ ] Push to GitHub: `feat: moderation queue with approve and reject`
 
