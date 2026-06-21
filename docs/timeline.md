@@ -91,10 +91,10 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Admin can see pending public submissions and approve or reject them.
 
-- [ ] Create `app/admin/dashboard/queue/page.tsx`
+- [/] Create `app/admin/dashboard/queue/page.tsx`
   - Server component: fetch all locations where `is_approved = false`
   - Render each as a `QueueItem` card
-- [ ] Create `components/admin/QueueItem.tsx`
+- [/] Create `components/admin/QueueItem.tsx`
   - Shows all submitted fields
   - Two buttons: **Approve** and **Reject**
 - [ ] Create Route Handler `app/api/admin/approve/route.ts`
