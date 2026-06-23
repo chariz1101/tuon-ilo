@@ -1,18 +1,7 @@
-import { supabase } from '@/lib/supabase'
+'use client'
 
-export default async function Home() {
-  const { data, error } = await supabase
-    .from('locations')
-    .select('*')
-    .limit(3)
+import MapView from '@/components/map/MapView'
 
-  console.log('data:', data)
-  console.log('error:', error)
-
-  return (
-    <main>
-      <h1>Tuon.ILO</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </main>
-  )
+export default function Home() {
+  return <MapView />
 }

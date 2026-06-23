@@ -157,8 +157,8 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 **Goal:** Get an interactive map rendering on the screen with pins from the database.
 
-- [ ] Get your Mapbox public token and add it to `.env.local`
-- [ ] Create `components/map/MapView.tsx`
+- [/] Get your Mapbox public token and add it to `.env.local`
+- [/] Create `components/map/MapView.tsx`
   - Initialize `react-map-gl` map centered on Iloilo City (`lng: 122.5644, lat: 10.7202`, zoom 13)
   - Fetch all `is_approved = true` locations from Supabase
   - Render a `<Marker>` for each location
