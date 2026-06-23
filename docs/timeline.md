@@ -200,7 +200,7 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 - [/] Lift filter state to `app/page.tsx`
 - [/] Apply filters client-side — filter the locations array before passing to `MapView`
 - [/] "Clear filters" button resets all filters
-- [ ] Test: toggle Noise Level QUIET → only quiet spots show pins
+- [/] Test: toggle Noise Level QUIET → only quiet spots show pins
 - [ ] Push to GitHub: `feat: filter bar for map pins`
 
 ---
