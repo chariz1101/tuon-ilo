@@ -8,12 +8,14 @@ export const dynamic = 'force-dynamic'
 export default async function EditSpotPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
+
   const { data, error } = await supabase
     .from('locations')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !data) {
