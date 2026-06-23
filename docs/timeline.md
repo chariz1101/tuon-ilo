@@ -119,14 +119,14 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
   - Render as a table using shadcn `Table` component
   - Columns: Name, Type, Wi-Fi, Charging, Actions
 - [/] Create `components/admin/ManageTable.tsx`
-- [ ] Add **Delete** button per row
+- [/] Add **Delete** button per row
   - Calls Route Handler `app/api/admin/delete/route.ts`
   - Runs `DELETE FROM locations WHERE id = $1`
   - Confirm before deleting (simple `window.confirm` dialog is fine for now)
-- [ ] Add **Edit** button per row
+- [/] Add **Edit** button per row
   - Opens the same `AddLocationForm` but pre-filled with existing data
   - On submit, runs `UPDATE` instead of `INSERT`
-- [ ] Create Route Handler `app/api/admin/update/route.ts`
+- [/] Create Route Handler `app/api/admin/update/route.ts`
 - [ ] Push to GitHub: `feat: manage live spots with edit and delete`
 
 ---
