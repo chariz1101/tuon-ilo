@@ -135,10 +135,10 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Clean up the admin dashboard, fix bugs, and catch up on anything from Days 1–6.
 
-- [ ] Style the admin dashboard consistently (Tailwind — keep it clean and minimal, not fancy)
-- [ ] Add loading states to all buttons (disable button + show spinner while awaiting API)
-- [ ] Add error handling — show error messages if any API call fails
-- [ ] Make the admin dashboard mobile-friendly (basic responsive layout)
+- [/] Style the admin dashboard consistently (Tailwind — keep it clean and minimal, not fancy)
+- [/] Add loading states to all buttons (disable button + show spinner while awaiting API)
+- [/] Add error handling — show error messages if any API call fails
+- [/] Make the admin dashboard mobile-friendly (basic responsive layout)
 - [ ] Review all Route Handlers — make sure unauthenticated requests are rejected
 - [ ] Do a full end-to-end test of the admin flow:
   - Login → Add spot → View on manage page → Edit it → Go to queue → Approve a pending item → Delete a spot

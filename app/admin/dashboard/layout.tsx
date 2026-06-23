@@ -8,7 +8,7 @@ export default function AdminDashboardLayout({
   return (
     <div className="min-h-screen bg-slate-50">
       <nav className="border-b bg-white px-6 py-3">
-        <div className="mx-auto flex max-w-3xl items-center gap-6">
+        <div className="mx-auto flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/admin/dashboard" className="font-semibold">
             Tuon.ILO Admin
           </Link>

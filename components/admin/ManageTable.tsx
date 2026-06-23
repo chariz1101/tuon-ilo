@@ -39,7 +39,7 @@ export default function ManageTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
+    <div className="overflow-x-auto rounded-lg border bg-white">
       <Table>
         <TableHeader>
           <TableRow>
