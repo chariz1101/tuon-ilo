@@ -162,9 +162,9 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
   - Initialize `react-map-gl` map centered on Iloilo City (`lng: 122.5644, lat: 10.7202`, zoom 13)
   - Fetch all `is_approved = true` locations from Supabase
   - Render a `<Marker>` for each location
-- [ ] Create `components/map/MapPin.tsx` — a styled SVG pin (different colors for CAFE vs STUDY_HUB)
-- [ ] Render `MapView` in `app/page.tsx`
-- [ ] Confirm: map loads, pins appear at correct coordinates
+- [/] Create `components/map/MapPin.tsx` — a styled SVG pin (different colors for CAFE vs STUDY_HUB)
+- [/] Render `MapView` in `app/page.tsx`
+- [/] Confirm: map loads, pins appear at correct coordinates
 - [ ] Push to GitHub: `feat: mapbox map with location pins`
 
 ---
