@@ -42,12 +42,14 @@ export default function LocationPicker({
         style={{ width: '100%', height: '300px' }}
       >
         {latitude && longitude && (
-          <Marker
+        <Marker
             longitude={longitude}
             latitude={latitude}
             draggable
             onDragEnd={handleMarkerDrag}
-          />
+            anchor="bottom"
+        >
+        </Marker>
         )}
       </Map>
       <p className="bg-slate-50 px-3 py-2 text-xs text-slate-500">
