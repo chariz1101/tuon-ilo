@@ -127,7 +127,7 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
   - Opens the same `AddLocationForm` but pre-filled with existing data
   - On submit, runs `UPDATE` instead of `INSERT`
 - [/] Create Route Handler `app/api/admin/update/route.ts`
-- [ ] Push to GitHub: `feat: manage live spots with edit and delete`
+- [/] Push to GitHub: `feat: manage live spots with edit and delete`
 
 ---
 
