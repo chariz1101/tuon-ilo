@@ -10,6 +10,7 @@ import {
   formatHours,
 } from '@/lib/utils'
 import type { Location } from '@/types'
+import { Loader2 } from 'lucide-react'
 
 export default function QueueItem({ location }: { location: Location }) {
   const [loading, setLoading] = useState<'approve' | 'reject' | null>(null)
@@ -91,6 +92,7 @@ export default function QueueItem({ location }: { location: Location }) {
             disabled={loading !== null}
             className="flex-1"
           >
+            {loading === 'approve' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {loading === 'approve' ? 'Approving...' : 'Approve'}
           </Button>
           <Button
