@@ -114,11 +114,11 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 
 **Goal:** Admin can edit any field of a live spot, or permanently delete it.
 
-- [ ] Create `app/admin/dashboard/manage/page.tsx`
+- [/] Create `app/admin/dashboard/manage/page.tsx`
   - Fetch all locations where `is_approved = true`
   - Render as a table using shadcn `Table` component
   - Columns: Name, Type, Wi-Fi, Charging, Actions
-- [ ] Create `components/admin/ManageTable.tsx`
+- [/] Create `components/admin/ManageTable.tsx`
 - [ ] Add **Delete** button per row
   - Calls Route Handler `app/api/admin/delete/route.ts`
   - Runs `DELETE FROM locations WHERE id = $1`
