@@ -185,7 +185,7 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 - [/] Render `LocationCard` as a sidebar panel when `selectedLocation` is set
 - [/] Style the sidebar so it overlays the map cleanly (fixed position, scrollable)
 - [/] Test: click each mock pin → sidebar shows correct data
-- [ ] Push to GitHub: `feat: location detail sidebar`
+- [/] Push to GitHub: `feat: location detail sidebar`
 
 ---
 
