@@ -165,7 +165,7 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 - [/] Create `components/map/MapPin.tsx` — a styled SVG pin (different colors for CAFE vs STUDY_HUB)
 - [/] Render `MapView` in `app/page.tsx`
 - [/] Confirm: map loads, pins appear at correct coordinates
-- [ ] Push to GitHub: `feat: mapbox map with location pins`
+- [/] Push to GitHub: `feat: mapbox map with location pins`
 
 ---
 
