@@ -193,13 +193,13 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 **Goal:** Users can filter visible pins by type, Wi-Fi status, and charging status.
 
-- [ ] Create `components/map/FilterBar.tsx`
+- [/] Create `components/map/FilterBar.tsx`
   - Four filter groups: Type, Wi-Fi, Charging, Noise Level
   - Each option is a toggle button (shadcn `Badge` or `Button` variant)
   - Active filter is visually highlighted
-- [ ] Lift filter state to `app/page.tsx`
-- [ ] Apply filters client-side — filter the locations array before passing to `MapView`
-- [ ] "Clear filters" button resets all filters
+- [/] Lift filter state to `app/page.tsx`
+- [/] Apply filters client-side — filter the locations array before passing to `MapView`
+- [/] "Clear filters" button resets all filters
 - [ ] Test: toggle Noise Level QUIET → only quiet spots show pins
 - [ ] Push to GitHub: `feat: filter bar for map pins`
 
