@@ -182,9 +182,9 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
   - Fetches and displays average rating: `SELECT AVG(rating) FROM reviews WHERE location_id = $1`
   - Renders star display (e.g. ★★★☆☆)
   - Close button to deselect
-- [ ] Render `LocationCard` as a sidebar panel when `selectedLocation` is set
-- [ ] Style the sidebar so it overlays the map cleanly (fixed position, scrollable)
-- [ ] Test: click each mock pin → sidebar shows correct data
+- [/] Render `LocationCard` as a sidebar panel when `selectedLocation` is set
+- [/] Style the sidebar so it overlays the map cleanly (fixed position, scrollable)
+- [/] Test: click each mock pin → sidebar shows correct data
 - [ ] Push to GitHub: `feat: location detail sidebar`
 
 ---
