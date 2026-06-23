@@ -3,6 +3,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { locationSchema, type LocationFormValues } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
@@ -16,8 +17,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import type { Location } from '@/types'
 
-export default function AddLocationForm() {
+interface AddLocationFormProps {
+  // If provided, the form runs in "edit" mode instead of "add" mode
+  existingLocation?: Location
+}
+
+export default function AddLocationForm({
+  existingLocation,
+}: AddLocationFormProps) {
+  const isEditMode = !!existingLocation
+  const router = useRouter()
+
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -31,12 +43,31 @@ export default function AddLocationForm() {
     formState: { errors },
   } = useForm<LocationFormValues>({
     resolver: zodResolver(locationSchema),
-    defaultValues: {
-      type: 'CAFE',
-      wifi_status: 'FREE',
-      charging_status: 'FREE',
-      is_24_hours: false,
-    },
+    defaultValues: existingLocation
+      ? {
+          name: existingLocation.name,
+          type: existingLocation.type,
+          latitude: existingLocation.latitude,
+          longitude: existingLocation.longitude,
+          wifi_status: existingLocation.wifi_status,
+          charging_status: existingLocation.charging_status,
+          pricing_details: existingLocation.pricing_details ?? '',
+          contact_info: existingLocation.contact_info ?? '',
+          image_url: existingLocation.image_url ?? '',
+          facebook_url: existingLocation.facebook_url ?? '',
+          instagram_url: existingLocation.instagram_url ?? '',
+          gmaps_url: existingLocation.gmaps_url ?? '',
+          noise_level: existingLocation.noise_level ?? undefined,
+          is_24_hours: existingLocation.is_24_hours,
+          opening_time: existingLocation.opening_time ?? '',
+          closing_time: existingLocation.closing_time ?? '',
+        }
+      : {
+          type: 'CAFE',
+          wifi_status: 'FREE',
+          charging_status: 'FREE',
+          is_24_hours: false,
+        },
   })
 
   const is24Hours = watch('is_24_hours')
@@ -45,6 +76,27 @@ export default function AddLocationForm() {
     setSubmitting(true)
     setSubmitError('')
 
+    if (isEditMode) {
+      const res = await fetch('/api/admin/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: existingLocation.id, ...values }),
+      })
+
+      setSubmitting(false)
+
+      if (!res.ok) {
+        const body = await res.json()
+        setSubmitError(body.error ?? 'Something went wrong')
+        return
+      }
+
+      router.push('/admin/dashboard/manage')
+      router.refresh()
+      return
+    }
+
+    // Add mode
     const { error } = await supabase.from('locations').insert({
       ...values,
       is_approved: true,
@@ -290,7 +342,13 @@ export default function AddLocationForm() {
       )}
 
       <Button type="submit" disabled={submitting} className="w-full">
-        {submitting ? 'Adding...' : 'Add Spot'}
+        {submitting
+          ? isEditMode
+            ? 'Saving...'
+            : 'Adding...'
+          : isEditMode
+          ? 'Save Changes'
+          : 'Add Spot'}
       </Button>
     </form>
   )
