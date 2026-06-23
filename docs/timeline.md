@@ -173,8 +173,8 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 **Goal:** Clicking a pin opens a sidebar showing full location details and average rating.
 
-- [ ] Add `onClick` to each `<Marker>` — sets a `selectedLocation` state
-- [ ] Create `components/location/LocationCard.tsx`
+- [/] Add `onClick` to each `<Marker>` — sets a `selectedLocation` state
+- [/] Create `components/location/LocationCard.tsx`
   - Shows: Name, type badge, Wi-Fi badge, Charging badge, Noise Level badge, pricing details
   - Shows location photo if `image_url` is present
   - Shows opening hours or "Open 24 hours" based on `is_24_hours`
