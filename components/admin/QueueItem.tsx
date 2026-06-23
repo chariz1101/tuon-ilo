@@ -18,24 +18,44 @@ export default function QueueItem({ location }: { location: Location }) {
 
   async function handleApprove() {
     setLoading('approve')
-    await fetch('/api/admin/approve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: location.id }),
-    })
-    setLoading(null)
-    router.refresh()
+    try {
+      const rest = await fetch('/api/admin/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: location.id }),
+      })
+      if (!rest.ok) {
+        const body = await rest.json()
+        alert(body.error ?? 'Failed to approve. Please try again.')
+      } else {
+        router.refresh()
+      }
+    } catch (error) {
+      alert('Network error. Please check your connection and try again.')
+    } finally {
+      setLoading(null)
+    }
   }
 
   async function handleReject() {
     setLoading('reject')
-    await fetch('/api/admin/reject', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: location.id }),
-    })
-    setLoading(null)
-    router.refresh()
+    try {
+      const rest = await fetch('/api/admin/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: location.id }),
+      })
+      if (!rest.ok) {
+        const body = await rest.json()
+        alert(body.error ?? 'Failed to reject. Please try again.')
+      } else {
+        router.refresh()
+      }
+    } catch (error) {
+      alert('Network error. Please check your connection and try again.')
+    } finally {
+      setLoading(null)
+    }
   }
 
   return (
