@@ -143,6 +143,7 @@ The goal of Week 1 is to have a working backend and a fully functional admin pan
 - [/] Do a full end-to-end test of the admin flow:
   - Login → Add spot → View on manage page → Edit it → Go to queue → Approve a pending item → Delete a spot
 - [/] Push to GitHub: `feat: admin dashboard polish and error handling`
+- [/] Log
 
 ---
 
