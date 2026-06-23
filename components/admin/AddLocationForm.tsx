@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Location } from '@/types'
+import LocationPicker from '@/components/admin/LocationPicker'
 
 interface AddLocationFormProps {
   // If provided, the form runs in "edit" mode instead of "add" mode
@@ -154,34 +155,36 @@ export default function AddLocationForm({
         />
       </div>
 
-      {/* Latitude / Longitude */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="latitude">Latitude</Label>
-          <Input
-            id="latitude"
-            type="number"
-            step="any"
-            {...register('latitude', { valueAsNumber: true })}
-            placeholder="10.9575"
-          />
-          {errors.latitude && (
-            <p className="text-sm text-red-600">{errors.latitude.message}</p>
+      {/* Location Picker */}
+      <div className="space-y-2">
+        <Label>Location</Label>
+        <Controller
+          name="latitude"
+          control={control}
+          render={({ field: latField }) => (
+            <Controller
+              name="longitude"
+              control={control}
+              render={({ field: lngField }) => (
+                <LocationPicker
+                  latitude={latField.value}
+                  longitude={lngField.value}
+                  onChange={(lat, lng) => {
+                    latField.onChange(lat)
+                    lngField.onChange(lng)
+                  }}
+                />
+              )}
+            />
           )}
+        />
+        <div className="flex gap-4 text-xs text-slate-500">
+          <span>Lat: {watch('latitude')?.toFixed(6) ?? '—'}</span>
+          <span>Lng: {watch('longitude')?.toFixed(6) ?? '—'}</span>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="longitude">Longitude</Label>
-          <Input
-            id="longitude"
-            type="number"
-            step="any"
-            {...register('longitude', { valueAsNumber: true })}
-            placeholder="123.3086"
-          />
-          {errors.longitude && (
-            <p className="text-sm text-red-600">{errors.longitude.message}</p>
-          )}
-        </div>
+        {(errors.latitude || errors.longitude) && (
+          <p className="text-sm text-red-600">Please select a location on the map.</p>
+        )}
       </div>
 
       {/* Wi-Fi / Charging */}
