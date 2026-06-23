@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
+import { Montserrat } from 'next/font/google'
 import './globals.css'
+
+const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Tuon.ILO',
@@ -13,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
-      <body className="bg-slate-50 text-slate-900 antialiased">
+    <html lang="en">
+      <body className={`${montserrat.className} bg-slate-50 text-slate-900 antialiased`}>
         {children}
       </body>
     </html>
