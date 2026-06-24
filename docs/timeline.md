@@ -222,7 +222,7 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
   - After submit: refresh `ReviewList` and update average rating display
 - [/] Add `ReviewList` and `ReviewForm` inside `LocationCard`
 - [/] Test: submit review → star average updates → try submitting again → blocked
-- [ ] Push to GitHub: `feat: review system with duplicate prevention`
+- [/] Push to GitHub: `feat: review system with duplicate prevention`
 
 ---
 
