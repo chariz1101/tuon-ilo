@@ -209,7 +209,7 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 **Goal:** Users can read and submit reviews for any location.
 
-- [ ] Create `components/location/ReviewList.tsx`
+- [/] Create `components/location/ReviewList.tsx`
   - Fetches all reviews for `selectedLocation.id`
   - Displays each as a card: stars, comment, relative date
   - Shows "No reviews yet" if empty
