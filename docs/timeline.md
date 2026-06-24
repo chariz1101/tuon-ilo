@@ -230,14 +230,14 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
 
 **Goal:** Anyone can submit a new spot, which lands in the admin moderation queue.
 
-- [ ] Add a "Submit a Spot" button on the homepage (floating button or in a navbar)
-- [ ] Create a modal or drawer containing the public submission form
+- [/] Add a "Submit a Spot" button on the homepage (floating button or in a navbar)
+- [/] Create a modal or drawer containing the public submission form
   - Same fields as the admin Add Spot form, minus the auto-approve logic
   - Supabase INSERT with `is_approved: false`
-- [ ] After submit: show a "Thanks! Your submission is under review." confirmation
-- [ ] Validate with Zod before submitting
-- [ ] Test: submit a spot → check Supabase → `is_approved = false` → appears in admin queue
-- [ ] Push to GitHub: `feat: public spot submission form`
+- [/] After submit: show a "Thanks! Your submission is under review." confirmation
+- [/] Validate with Zod before submitting
+- [/] Test: submit a spot → check Supabase → `is_approved = false` → appears in admin queue
+- [/] Push to GitHub: `feat: public spot submission form`
 
 ---
 
