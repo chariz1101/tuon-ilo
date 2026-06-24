@@ -23,10 +23,14 @@ import LocationPicker from '@/components/admin/LocationPicker'
 interface AddLocationFormProps {
   // If provided, the form runs in "edit" mode instead of "add" mode
   existingLocation?: Location
+  isPublicSubmission?: boolean
+  onPublicSubmitSuccess?: () => void
 }
 
 export default function AddLocationForm({
   existingLocation,
+  isPublicSubmission = false,
+  onPublicSubmitSuccess,
 }: AddLocationFormProps) {
   const isEditMode = !!existingLocation
   const router = useRouter()
@@ -97,11 +101,10 @@ export default function AddLocationForm({
       return
     }
 
-    // Add mode
+    if (isPublicSubmission) {
     const { error } = await supabase.from('locations').insert({
       ...values,
-      is_approved: true,
-      // Empty strings should be stored as null, not ''
+      is_approved: false,
       pricing_details: values.pricing_details || null,
       contact_info: values.contact_info || null,
       image_url: values.image_url || null,
@@ -118,11 +121,11 @@ export default function AddLocationForm({
       setSubmitError(error.message)
       return
     }
-
-    setSuccess(true)
-    reset()
-    setTimeout(() => setSuccess(false), 3000)
+    
+    onPublicSubmitSuccess?.()
+    return
   }
+}
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-xl">
@@ -345,14 +348,16 @@ export default function AddLocationForm({
       )}
 
       <Button type="submit" disabled={submitting} className="w-full">
-        {submitting
-          ? isEditMode
-            ? 'Saving...'
-            : 'Adding...'
-          : isEditMode
-          ? 'Save Changes'
-          : 'Add Spot'}
-      </Button>
+  {submitting
+    ? isEditMode
+      ? 'Saving...'
+      : 'Adding...'
+    : isEditMode
+    ? 'Save Changes'
+    : isPublicSubmission
+    ? 'Submit for Review'
+    : 'Add Spot'}
+</Button>
     </form>
   )
 }

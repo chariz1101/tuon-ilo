@@ -6,6 +6,8 @@ import LocationCard from '@/components/location/LocationCard'
 import FilterBar, { type FilterState } from '@/components/map/FilterBar'
 import { supabase } from '@/lib/supabase'
 import type { Location } from '@/types'
+import { Plus } from 'lucide-react'
+import SubmitSpotModal from '@/components/location/SubmitSpotModal'
 
 export default function Home() {
   const [allLocations, setAllLocations] = useState<Location[]>([])
@@ -21,6 +23,8 @@ export default function Home() {
     charging_status: null,
     noise_level: null,
   })
+
+  const [submitModalOpen, setSubmitModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchLocations() {
@@ -87,6 +91,19 @@ export default function Home() {
           />
         </div>
       )}
+
+      <button
+        onClick={() => setSubmitModalOpen(true)}
+        className="fixed bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-slate-800"
+      >
+        <Plus className="h-4 w-4" />
+        Submit a Spot
+      </button>
+
+      <SubmitSpotModal
+        open={submitModalOpen}
+        onClose={() => setSubmitModalOpen(false)}
+      />
     </div>
   )
 }
