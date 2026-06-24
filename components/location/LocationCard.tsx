@@ -12,39 +12,44 @@ import {
   formatAverageRating,
 } from '@/lib/utils'
 import type { Location } from '@/types'
+import ReviewList from '@/components/location/ReviewList'
+import ReviewForm from '@/components/location/ReviewForm'
 
 interface LocationCardProps {
   location: Location
   onClose: () => void
 }
 
+
 export default function LocationCard({ location, onClose }: LocationCardProps) {
   const [averageRating, setAverageRating] = useState<number | null>(null)
   const [reviewCount, setReviewCount] = useState(0)
   const [loadingRating, setLoadingRating] = useState(true)
 
-  useEffect(() => {
-    async function fetchRating() {
-      setLoadingRating(true)
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('rating')
-        .eq('location_id', location.id)
+  const [refreshKey, setRefreshKey] = useState(0)
 
-      if (!error && data) {
-        setReviewCount(data.length)
-        if (data.length > 0) {
-          const sum = data.reduce((acc, r) => acc + r.rating, 0)
-          setAverageRating(sum / data.length)
-        } else {
-          setAverageRating(null)
-        }
+useEffect(() => {
+  async function fetchRating() {
+    setLoadingRating(true)
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('location_id', location.id)
+
+    if (!error && data) {
+      setReviewCount(data.length)
+      if (data.length > 0) {
+        const sum = data.reduce((acc, r) => acc + r.rating, 0)
+        setAverageRating(sum / data.length)
+      } else {
+        setAverageRating(null)
       }
-      setLoadingRating(false)
     }
+    setLoadingRating(false)
+  }
 
-    fetchRating()
-  }, [location.id])
+  fetchRating()
+}, [location.id, refreshKey])
 
   return (
     <div className="relative">
@@ -126,7 +131,7 @@ export default function LocationCard({ location, onClose }: LocationCardProps) {
           <div className="flex gap-3 border-t pt-4">
             {location.facebook_url && (
               
-                < a href={location.facebook_url}
+                <a href={location.facebook_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-600"
@@ -148,7 +153,7 @@ export default function LocationCard({ location, onClose }: LocationCardProps) {
             )}
             {location.gmaps_url && (
               
-                < a href={location.gmaps_url}
+                <a href={location.gmaps_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-red-600"
@@ -159,6 +164,15 @@ export default function LocationCard({ location, onClose }: LocationCardProps) {
             )}
           </div>
         )}
+<div className="space-y-3 border-t pt-4">
+  <p className="text-sm font-medium">Reviews</p>
+  <ReviewList locationId={location.id} refreshKey={refreshKey} />
+  <ReviewForm
+    locationId={location.id}
+    onReviewSubmitted={() => setRefreshKey((k) => k + 1)}
+  />
+</div>
+
       </div>
     </div>
   )

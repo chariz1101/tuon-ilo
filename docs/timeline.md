@@ -213,15 +213,15 @@ The goal of Week 2 is to build everything the public sees: the interactive Mapbo
   - Fetches all reviews for `selectedLocation.id`
   - Displays each as a card: stars, comment, relative date
   - Shows "No reviews yet" if empty
-- [ ] Create `components/location/ReviewForm.tsx`
+- [/] Create `components/location/ReviewForm.tsx`
   - Fields: star rating (1–5 clickable stars), comment (textarea)
   - On mount, generate or retrieve `session_id` from `localStorage`
   - Before showing form, check if a review from this `session_id` already exists for this location
   - If duplicate: show "You've already reviewed this place" instead of the form
   - On submit: Zod validate → Supabase INSERT into `reviews`
   - After submit: refresh `ReviewList` and update average rating display
-- [ ] Add `ReviewList` and `ReviewForm` inside `LocationCard`
-- [ ] Test: submit review → star average updates → try submitting again → blocked
+- [/] Add `ReviewList` and `ReviewForm` inside `LocationCard`
+- [/] Test: submit review → star average updates → try submitting again → blocked
 - [ ] Push to GitHub: `feat: review system with duplicate prevention`
 
 ---
