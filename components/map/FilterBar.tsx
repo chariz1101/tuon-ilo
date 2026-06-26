@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Coffee, BookOpen, Wifi, BatteryCharging, Volume2, X } from 'lucide-react'
 import type { LocationType, AmenityStatus, NoiseLevel } from '@/types'
 
 export interface FilterState {
@@ -15,13 +16,8 @@ interface FilterBarProps {
   onChange: (filters: FilterState) => void
 }
 
-const typeOptions: LocationType[] = ['CAFE', 'STUDY_HUB']
-const amenityOptions: AmenityStatus[] = ['FREE', 'PAID', 'NONE']
-const noiseOptions: NoiseLevel[] = ['QUIET', 'MODERATE', 'LIVELY']
-
 export default function FilterBar({ filters, onChange }: FilterBarProps) {
   function toggle<K extends keyof FilterState>(key: K, value: FilterState[K]) {
-    // Clicking an already-active filter turns it off (toggle behavior)
     const isActive = filters[key] === value
     onChange({ ...filters, [key]: isActive ? null : value })
   }
@@ -38,79 +34,101 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
   const hasActiveFilters = Object.values(filters).some((v) => v !== null)
 
   return (
-    <div className="flex flex-wrap items-center gap-3 overflow-x-auto bg-white/95 px-4 py-3 shadow backdrop-blur-sm">
-      <FilterGroup label="Type">
-        {typeOptions.map((option) => (
-          <Button
-            key={option}
-            size="sm"
-            variant={filters.type === option ? 'default' : 'outline'}
-            onClick={() => toggle('type', option)}
-          >
-            {option === 'CAFE' ? 'Cafe' : 'Study Hub'}
-          </Button>
-        ))}
-      </FilterGroup>
+    // The wrapper creates a seamless, map-like floating container
+    <div className="w-full bg-transparent p-4">
+      {/* no-scrollbar hides the scrollbar but keeps it swipeable on mobile */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 drop-shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        
+        {/* Type Filters */}
+        <FilterPill
+          active={filters.type === 'CAFE'}
+          onClick={() => toggle('type', 'CAFE')}
+          icon={<Coffee className="h-4 w-4" />}
+          label="Cafe"
+        />
+        <FilterPill
+          active={filters.type === 'STUDY_HUB'}
+          onClick={() => toggle('type', 'STUDY_HUB')}
+          icon={<BookOpen className="h-4 w-4" />}
+          label="Study Hub"
+        />
 
-      <FilterGroup label="Wi-Fi">
-        {amenityOptions.map((option) => (
-          <Button
-            key={option}
-            size="sm"
-            variant={filters.wifi_status === option ? 'default' : 'outline'}
-            onClick={() => toggle('wifi_status', option)}
-          >
-            {option}
-          </Button>
-        ))}
-      </FilterGroup>
+        {/* Divider */}
+        <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
 
-      <FilterGroup label="Charging">
-        {amenityOptions.map((option) => (
-          <Button
-            key={option}
-            size="sm"
-            variant={filters.charging_status === option ? 'default' : 'outline'}
-            onClick={() => toggle('charging_status', option)}
-          >
-            {option}
-          </Button>
-        ))}
-      </FilterGroup>
+        {/* Amenity Filters - Simplified to target the most desired states */}
+        <FilterPill
+          active={filters.wifi_status === 'FREE'}
+          onClick={() => toggle('wifi_status', 'FREE')}
+          icon={<Wifi className="h-4 w-4" />}
+          label="Free Wi-Fi"
+        />
+        <FilterPill
+          active={filters.charging_status === 'FREE'}
+          onClick={() => toggle('charging_status', 'FREE')}
+          icon={<BatteryCharging className="h-4 w-4" />}
+          label="Free Charging"
+        />
 
-      <FilterGroup label="Noise">
-        {noiseOptions.map((option) => (
-          <Button
-            key={option}
-            size="sm"
-            variant={filters.noise_level === option ? 'default' : 'outline'}
-            onClick={() => toggle('noise_level', option)}
-          >
-            {option}
-          </Button>
-        ))}
-      </FilterGroup>
+        {/* Divider */}
+        <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
 
-      {hasActiveFilters && (
-        <Button size="sm" variant="ghost" onClick={clearAll}>
-          Clear filters
-        </Button>
-      )}
+        {/* Noise Filters */}
+        <FilterPill
+          active={filters.noise_level === 'QUIET'}
+          onClick={() => toggle('noise_level', 'QUIET')}
+          icon={<Volume2 className="h-4 w-4" />}
+          label="Quiet"
+        />
+        <FilterPill
+          active={filters.noise_level === 'LIVELY'}
+          onClick={() => toggle('noise_level', 'LIVELY')}
+          icon={<Volume2 className="h-4 w-4" />}
+          label="Lively"
+        />
+
+        {/* Clear Button */}
+        {hasActiveFilters && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={clearAll}
+            className="shrink-0 rounded-full text-slate-500 hover:bg-slate-200"
+          >
+            <X className="mr-1 h-4 w-4" />
+            Clear
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
 
-function FilterGroup({
+// Sub-component for the Maps-style Pill
+function FilterPill({
+  active,
+  onClick,
+  icon,
   label,
-  children,
 }: {
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
   label: string
-  children: React.ReactNode
 }) {
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-xs font-medium text-slate-500">{label}:</span>
-      <div className="flex gap-1.5">{children}</div>
-    </div>
+    <Button
+      size="sm"
+      variant={active ? 'default' : 'secondary'}
+      onClick={onClick}
+      className={`shrink-0 rounded-full transition-all ${
+        active
+          ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' // Maps active state color
+          : 'bg-white text-slate-700 shadow-sm hover:bg-slate-100 border border-slate-200'
+      }`}
+    >
+      <span className="mr-1.5">{icon}</span>
+      {label}
+    </Button>
   )
 }
