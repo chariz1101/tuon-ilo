@@ -58,7 +58,7 @@ export function noiseLevelBadgeColor(level: NoiseLevel): string {
 }
 
 export function pinColor(type: LocationType): string {
-  return type === 'CAFE' ? '#f97316' : '#3b82f6'
+  return type === 'CAFE' ? '#92400e' : '#7c3aed'
 }
 
 export function formatTime(time: string | null): string {

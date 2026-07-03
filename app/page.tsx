@@ -70,6 +70,17 @@ export default function Home() {
         <FilterBar filters={filters} onChange={setFilters} />
       </div>
 
+      <div className="absolute left-4 top-20 z-10 flex flex-col gap-1.5 rounded-lg bg-white/95 px-3 py-2 shadow text-xs backdrop-blur-sm">
+  <div className="flex items-center gap-2">
+    <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#92400e' }} />
+    Cafe
+  </div>
+  <div className="flex items-center gap-2">
+    <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#7c3aed' }} />
+    Study Hub
+  </div>
+</div>
+
       {loading && (
         <div className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 text-sm shadow">
           Loading spots...
