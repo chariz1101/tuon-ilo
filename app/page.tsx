@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase'
 import type { Location } from '@/types'
 import { Plus } from 'lucide-react'
 import SubmitSpotModal from '@/components/location/SubmitSpotModal'
+import { Analytics } from "@vercel/analytics/next"
 
 export default function Home() {
   const [allLocations, setAllLocations] = useState<Location[]>([])
@@ -115,6 +116,7 @@ export default function Home() {
         open={submitModalOpen}
         onClose={() => setSubmitModalOpen(false)}
       />
+      <Analytics />
     </div>
   )
 }
