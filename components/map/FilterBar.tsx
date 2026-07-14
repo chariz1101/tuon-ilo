@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Coffee, BookOpen, Wifi, BatteryCharging, Volume2, X } from 'lucide-react'
+import { Coffee, BookOpen, Wifi, BatteryCharging, Volume1, Volume2, X } from 'lucide-react'
 import type { LocationType, AmenityStatus, NoiseLevel } from '@/types'
 
 export interface FilterState {
@@ -73,12 +73,18 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
         {/* Divider */}
         <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
 
-        {/* Noise Filters */}
+        {/* Noise Filters - all three levels, so Moderate isn't a dead zone between pills */}
         <FilterPill
           active={filters.noise_level === 'QUIET'}
           onClick={() => toggle('noise_level', 'QUIET')}
-          icon={<Volume2 className="h-4 w-4" />}
+          icon={<Volume1 className="h-4 w-4" />}
           label="Quiet"
+        />
+        <FilterPill
+          active={filters.noise_level === 'MODERATE'}
+          onClick={() => toggle('noise_level', 'MODERATE')}
+          icon={<Volume1 className="h-4 w-4" />}
+          label="Moderate"
         />
         <FilterPill
           active={filters.noise_level === 'LIVELY'}
