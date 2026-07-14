@@ -5,7 +5,7 @@ interface MapPinProps {
   size?: number
 }
 
-export default function MapPin({ type, size = 58 }: MapPinProps) {
+export default function MapPin({ type, size = 50 }: MapPinProps) {
   const src = type === 'CAFE' ? '/cafe.svg' : '/studyHub.svg'
 
   return (
