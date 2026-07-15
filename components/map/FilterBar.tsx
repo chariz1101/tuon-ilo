@@ -1,11 +1,11 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Coffee, BookOpen, Wifi, BatteryCharging, Volume1, Volume2, X } from 'lucide-react'
-import type { LocationType, AmenityStatus, NoiseLevel } from '@/types'
+import { Search, Wifi, BatteryCharging, Volume1, Volume2, X } from 'lucide-react'
+import type { AmenityStatus, NoiseLevel } from '@/types'
 
 export interface FilterState {
-  type: LocationType | null
+  search: string
   wifi_status: AmenityStatus | null
   charging_status: AmenityStatus | null
   noise_level: NoiseLevel | null
@@ -24,34 +24,34 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
 
   function clearAll() {
     onChange({
-      type: null,
+      search: '',
       wifi_status: null,
       charging_status: null,
       noise_level: null,
     })
   }
 
-  const hasActiveFilters = Object.values(filters).some((v) => v !== null)
+  const hasActiveFilters =
+    filters.search !== '' ||
+    Object.entries(filters).some(([k, v]) => k !== 'search' && v !== null)
 
   return (
     // The wrapper creates a seamless, map-like floating container
     <div className="w-full bg-transparent p-4">
       {/* no-scrollbar hides the scrollbar but keeps it swipeable on mobile */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 drop-shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        
-        {/* Type Filters */}
-        <FilterPill
-          active={filters.type === 'CAFE'}
-          onClick={() => toggle('type', 'CAFE')}
-          icon={<Coffee className="h-4 w-4" />}
-          label="Cafe"
-        />
-        <FilterPill
-          active={filters.type === 'STUDY_HUB'}
-          onClick={() => toggle('type', 'STUDY_HUB')}
-          icon={<BookOpen className="h-4 w-4" />}
-          label="Study Hub"
-        />
+
+        {/* Search */}
+        <div className="relative shrink-0">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={filters.search}
+            onChange={(e) => onChange({ ...filters, search: e.target.value })}
+            placeholder="Search spots..."
+            className="h-9 w-48 rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-400"
+          />
+        </div>
 
         {/* Divider */}
         <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
