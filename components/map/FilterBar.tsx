@@ -49,10 +49,11 @@ export default function FilterBar({
   return (
     // The wrapper creates a seamless, map-like floating container
     <div className="w-full bg-transparent p-4">
-      {/* no-scrollbar hides the scrollbar but keeps it swipeable on mobile */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 drop-shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {/* Search */}
-        <div className="relative shrink-0">
+      <div className="flex items-start gap-2">
+        {/* Search - kept OUTSIDE the overflow-x-auto row below, since setting
+            overflow-x also clips overflow-y in browsers, which was hiding
+            this dropdown even though it was rendering correctly. */}
+        <div className="relative shrink-0 drop-shadow-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
@@ -92,6 +93,9 @@ export default function FilterBar({
             </div>
           )}
         </div>
+
+        {/* Pills row - this is the part that actually needs to scroll horizontally */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 drop-shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Divider */}
         <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
         {/* Amenity Filters - Simplified to target the most desired states */}
@@ -140,6 +144,7 @@ export default function FilterBar({
             Clear
           </Button>
         )}
+        </div>
       </div>
     </div>
   )
