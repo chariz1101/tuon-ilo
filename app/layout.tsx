@@ -1,24 +1,19 @@
-import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
-import './globals.css'
-
-const montserrat = Montserrat({ subsets: ['latin'] })
+import type { Metadata } from "next";
+import "./globals.css";
+import Header from "@/components/header";
 
 export const metadata: Metadata = {
-  title: 'Tuon.ILO',
-  description: 'Find study spaces and cafes in Iloilo City',
-}
+  title: "charchives — Chariz Dianne Falco",
+  description: "Portfolio of Chariz Dianne Falco, BS Computer Science — Artificial Intelligence, Magna Cum Laude.",
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className} bg-slate-50 text-slate-900 antialiased`}>
+      <body>
+        <Header />
         {children}
       </body>
     </html>
-  )
+  );
 }
