@@ -47,12 +47,14 @@ export default function FilterBar({
     filters.search !== '' ||
     Object.entries(filters).some(([k, v]) => k !== 'search' && v !== null)
   return (
-    // The wrapper creates a seamless, map-like floating container
+    
     <div className="w-full bg-transparent p-4">
       <div className="flex items-start gap-2">
-        {/* Search - kept OUTSIDE the overflow-x-auto row below, since setting
-            overflow-x also clips overflow-y in browsers, which was hiding
-            this dropdown even though it was rendering correctly. */}
+        <div className="relative shrink-0 drop-shadow-sm">
+          <img src="/logo.svg" alt="Logo" className="" />
+        </div>
+        
+        {/* Search Bar */}
         <div className="relative shrink-0 drop-shadow-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
@@ -61,7 +63,7 @@ export default function FilterBar({
             onChange={(e) => onChange({ ...filters, search: e.target.value })}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
-            placeholder="Search spots..."
+            placeholder="Search Tuon.ILO"
             className="h-9 w-48 rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-400"
           />
           {showDropdown && (
@@ -94,11 +96,11 @@ export default function FilterBar({
           )}
         </div>
 
-        {/* Pills row - this is the part that actually needs to scroll horizontally */}
+        {/* Pills row */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 drop-shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Divider */}
         <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
-        {/* Amenity Filters - Simplified to target the most desired states */}
+        {/* Amenity Filters */}
         <FilterPill
           active={filters.wifi_status === 'FREE'}
           onClick={() => toggle('wifi_status', 'FREE')}
@@ -113,7 +115,7 @@ export default function FilterBar({
         />
         {/* Divider */}
         <div className="mx-1 h-6 w-px shrink-0 bg-slate-300" />
-        {/* Noise Filters - all three levels, so Moderate isn't a dead zone between pills */}
+        {/* Noise Filters */}
         <FilterPill
           active={filters.noise_level === 'QUIET'}
           onClick={() => toggle('noise_level', 'QUIET')}
