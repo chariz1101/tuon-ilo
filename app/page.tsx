@@ -5,7 +5,7 @@ import LocationCard from '@/components/location/LocationCard'
 import FilterBar, { type FilterState } from '@/components/map/FilterBar'
 import { supabase } from '@/lib/supabase'
 import type { Location } from '@/types'
-import { Plus, Menu } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import SubmitSpotModal from '@/components/location/SubmitSpotModal'
 import { Analytics } from '@vercel/analytics/react'
 
@@ -14,7 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     wifi_status: null,
@@ -22,6 +22,11 @@ export default function Home() {
     noise_level: null,
   })
   const [submitModalOpen, setSubmitModalOpen] = useState(false)
+
+  // Start collapsed on small screens so the sidebar doesn't eat the map
+  useEffect(() => {
+    if (window.innerWidth < 640) setCollapsed(true)
+  }, [])
 
   useEffect(() => {
     async function fetchLocations() {
@@ -65,24 +70,12 @@ export default function Home() {
         filters={filters}
         onChange={setFilters}
         locations={allLocations}
-        onSelectLocation={(loc) => {
-          setSelectedLocation(loc)
-          setSidebarOpen(false)
-        }}
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        onSelectLocation={setSelectedLocation}
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed((v) => !v)}
       />
 
       <div className="relative h-full flex-1 overflow-hidden">
-        {/* Sidebaer toggle*/}
-        <button
-          onClick={() => setSidebarOpen((v) => !v)}
-          className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md hover:bg-slate-50"
-          aria-label="Toggle filters"
-        >
-          <Menu className="h-5 w-5 text-slate-700" />
-        </button>
-
         {loading && (
           <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 text-sm shadow">
             Loading spots...

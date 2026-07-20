@@ -1,7 +1,17 @@
 'use client'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Search, Wifi, BatteryCharging, Volume1, Volume2, X, SlidersHorizontal } from 'lucide-react'
+import {
+  Search,
+  Wifi,
+  BatteryCharging,
+  Volume1,
+  Volume2,
+  X,
+  SlidersHorizontal,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import type { AmenityStatus, NoiseLevel, Location } from '@/types'
 
 export interface FilterState {
@@ -16,8 +26,8 @@ interface FilterBarProps {
   onChange: (filters: FilterState) => void
   locations: Location[]
   onSelectLocation: (location: Location) => void
-  open: boolean
-  onClose: () => void
+  collapsed: boolean
+  onToggleCollapse: () => void
 }
 
 export default function FilterBar({
@@ -25,8 +35,8 @@ export default function FilterBar({
   onChange,
   locations,
   onSelectLocation,
-  open,
-  onClose,
+  collapsed,
+  onToggleCollapse,
 }: FilterBarProps) {
   const [searchFocused, setSearchFocused] = useState(false)
 
@@ -53,42 +63,70 @@ export default function FilterBar({
     })
   }
 
+  function expandThenRun(fn: () => void) {
+    if (collapsed) onToggleCollapse()
+    fn()
+  }
+
   const activeCount = Object.entries(filters).filter(
     ([k, v]) => k !== 'search' && v !== null
   ).length
   const hasActiveFilters = filters.search !== '' || activeCount > 0
 
   return (
-    <>
-      {/* Backdrop, mobile */}
-      {open && (
-        <div
-          onClick={onClose}
-          className="fixed inset-0 z-30 bg-black/30 sm:hidden"
-          aria-hidden="true"
-        />
-      )}
-
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-full w-72 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-out sm:static sm:z-0 sm:translate-x-0 ${
-          open ? 'translate-x-0' : '-translate-x-full'
+    <aside
+      className={`relative flex h-full shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-200 ${
+        collapsed ? 'w-16' : 'w-72'
+      }`}
+    >
+      {/* Header */}
+      <div
+        className={`flex items-center border-b border-slate-100 py-4 ${
+          collapsed ? 'justify-center px-2' : 'justify-between px-4'
         }`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-4">
-          <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Logo" className="h-7 w-auto" />
-          </div>
+        <div className="flex items-center gap-2">
+          <img
+            src={collapsed ? '/logo-small.svg' : '/logo.svg'}
+            alt="Logo"
+            className="h-7 w-auto"
+          />
+        </div>
+        {!collapsed && (
           <button
-            onClick={onClose}
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 sm:hidden"
-            aria-label="Close filters"
+            onClick={onToggleCollapse}
+            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Collapse sidebar"
           >
-            <X className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Collapsed rail expand button */}
+      {collapsed && (
+        <button
+          onClick={onToggleCollapse}
+          className="mx-auto mt-2 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+          aria-label="Expand sidebar"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      )}
+
+      {/* Search */}
+      {collapsed ? (
+        <div className="flex justify-center border-b border-slate-100 py-3">
+          <button
+            onClick={() => expandThenRun(() => setSearchFocused(true))}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Search spots"
+            title="Search spots"
+          >
+            <Search className="h-4 w-4" />
           </button>
         </div>
-
-        {/* Search */}
+      ) : (
         <div className="border-b border-slate-100 px-4 py-3">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -100,6 +138,7 @@ export default function FilterBar({
               onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
               placeholder="Search spots"
               className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-8 text-sm outline-none placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
+              autoFocus={searchFocused}
             />
             {filters.search && (
               <button
@@ -122,7 +161,6 @@ export default function FilterBar({
                           onSelectLocation(loc)
                           onChange({ ...filters, search: loc.name })
                           setSearchFocused(false)
-                          onClose()
                         }}
                         className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-slate-50"
                       >
@@ -144,9 +182,11 @@ export default function FilterBar({
             )}
           </div>
         </div>
+      )}
 
-        {/* Filters */}
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+      {/* Filters */}
+      <div className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-3' : 'px-4 py-4'}`}>
+        {!collapsed && (
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
               <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -158,64 +198,114 @@ export default function FilterBar({
               </span>
             )}
           </div>
+        )}
 
-          <FilterGroup label="Amenities">
-            <FilterRow
+        {collapsed ? (
+          <div className="flex flex-col items-center gap-1.5">
+            <IconRailButton
               active={filters.wifi_status === 'FREE'}
               onClick={() => toggle('wifi_status', 'FREE')}
               icon={<Wifi className="h-4 w-4" />}
               label="Free Wi-Fi"
             />
-            <FilterRow
+            <IconRailButton
               active={filters.charging_status === 'FREE'}
               onClick={() => toggle('charging_status', 'FREE')}
               icon={<BatteryCharging className="h-4 w-4" />}
               label="Free Charging"
             />
-          </FilterGroup>
-
-          <FilterGroup label="Atmosphere">
-            <FilterRow
+            <div className="my-1 h-px w-8 bg-slate-100" />
+            <IconRailButton
               active={filters.noise_level === 'QUIET'}
               onClick={() => toggle('noise_level', 'QUIET')}
               icon={<Volume1 className="h-4 w-4" />}
               label="Quiet"
             />
-            <FilterRow
+            <IconRailButton
               active={filters.noise_level === 'MODERATE'}
               onClick={() => toggle('noise_level', 'MODERATE')}
               icon={<Volume1 className="h-4 w-4" />}
               label="Moderate"
             />
-            <FilterRow
+            <IconRailButton
               active={filters.noise_level === 'LIVELY'}
               onClick={() => toggle('noise_level', 'LIVELY')}
               icon={<Volume2 className="h-4 w-4" />}
               label="Lively"
             />
-          </FilterGroup>
-
-          <div className="mt-2 text-xs text-slate-400">
-            {matches.length} of {locations.length} spots match
           </div>
-        </div>
+        ) : (
+          <>
+            <FilterGroup label="Amenities">
+              <FilterRow
+                active={filters.wifi_status === 'FREE'}
+                onClick={() => toggle('wifi_status', 'FREE')}
+                icon={<Wifi className="h-4 w-4" />}
+                label="Free Wi-Fi"
+              />
+              <FilterRow
+                active={filters.charging_status === 'FREE'}
+                onClick={() => toggle('charging_status', 'FREE')}
+                icon={<BatteryCharging className="h-4 w-4" />}
+                label="Free Charging"
+              />
+            </FilterGroup>
 
-        {/* Footer */}
-        {hasActiveFilters && (
-          <div className="border-t border-slate-100 px-4 py-3">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={clearAll}
-              className="w-full justify-center rounded-lg text-slate-500 hover:bg-slate-100"
-            >
-              <X className="mr-1.5 h-4 w-4" />
-              Clear all filters
-            </Button>
-          </div>
+            <FilterGroup label="Atmosphere">
+              <FilterRow
+                active={filters.noise_level === 'QUIET'}
+                onClick={() => toggle('noise_level', 'QUIET')}
+                icon={<Volume1 className="h-4 w-4" />}
+                label="Quiet"
+              />
+              <FilterRow
+                active={filters.noise_level === 'MODERATE'}
+                onClick={() => toggle('noise_level', 'MODERATE')}
+                icon={<Volume1 className="h-4 w-4" />}
+                label="Moderate"
+              />
+              <FilterRow
+                active={filters.noise_level === 'LIVELY'}
+                onClick={() => toggle('noise_level', 'LIVELY')}
+                icon={<Volume2 className="h-4 w-4" />}
+                label="Lively"
+              />
+            </FilterGroup>
+
+            <div className="mt-2 text-xs text-slate-400">
+              {matches.length} of {locations.length} spots match
+            </div>
+          </>
         )}
-      </aside>
-    </>
+      </div>
+
+      {/* Footer */}
+      {hasActiveFilters && !collapsed && (
+        <div className="border-t border-slate-100 px-4 py-3">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={clearAll}
+            className="w-full justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+          >
+            <X className="mr-1.5 h-4 w-4" />
+            Clear all filters
+          </Button>
+        </div>
+      )}
+      {hasActiveFilters && collapsed && (
+        <div className="flex justify-center border-t border-slate-100 py-3">
+          <button
+            onClick={clearAll}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Clear all filters"
+            title="Clear all filters"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+    </aside>
   )
 }
 
@@ -249,9 +339,7 @@ function FilterRow({
     <button
       onClick={onClick}
       className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors ${
-        active
-          ? 'bg-blue-600 text-white shadow-sm'
-          : 'text-slate-700 hover:bg-slate-100'
+        active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'
       }`}
     >
       <span className={active ? 'text-white' : 'text-slate-400'}>{icon}</span>
@@ -261,6 +349,31 @@ function FilterRow({
           ✓
         </span>
       )}
+    </button>
+  )
+}
+
+function IconRailButton({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
+  label: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={label}
+      aria-label={label}
+      className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+        active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+      }`}
+    >
+      {icon}
     </button>
   )
 }
