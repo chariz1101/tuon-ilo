@@ -65,15 +65,17 @@ export default function Home() {
   }, [allLocations, filters])
 
   return (
+    <div className="flex h-screen w-full overflow-hidden">
+      <FilterBar
+        filters={filters}
+        onChange={setFilters}
+        locations={allLocations}
+        onSelectLocation={setSelectedLocation}
+      />
+    
+
     <div className="relative h-screen w-full overflow-hidden">
-      <div className="absolute left-0 top-0 z-20 w-full">
-        <FilterBar
-          filters={filters}
-          onChange={setFilters}
-          locations={allLocations}
-          onSelectLocation={setSelectedLocation}
-        />
-      </div>
+      
 
       {/* <div className="absolute left-4 top-20 z-10 flex flex-col gap-1.5 rounded-lg bg-white/95 px-3 py-2 text-xs shadow backdrop-blur-sm">
         <div className="flex items-center gap-2">
@@ -130,6 +132,7 @@ export default function Home() {
         onClose={() => setSubmitModalOpen(false)}
       />
       <Analytics />
+    </div>
     </div>
   )
 }
