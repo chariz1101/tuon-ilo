@@ -18,6 +18,3 @@ Built with a focus on fast geospatial querying and seamless user experience, the
 * **Granular Filtering:** Filter locations by `STUDY_HUB` or `CAFE`, Wi-Fi availability, and charging port access.
 * **Community Reviews:** Low-friction, anonymous review system tied to session IDs to prevent spam while encouraging honest feedback.
 * **Moderation Queue:** An admin-facing moderation layer where user-submitted locations must be verified before appearing on the public map.
-
-
-// WIP
