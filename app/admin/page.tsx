@@ -34,10 +34,12 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <main className="flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-10">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Tuon.ILO Admin</CardTitle>
+          <CardTitle>
+            Tuon.ILO <span className="font-normal text-slate-400">Admin</span>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

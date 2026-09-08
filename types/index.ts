@@ -37,3 +37,23 @@ export interface LocationWithRating extends Location {
   average_rating: number | null
   review_count: number
 }
+export interface FilterState {
+  search: string
+  wifi_status: AmenityStatus | null
+  charging_status: AmenityStatus | null
+  noise_level: NoiseLevel | null
+}
+
+export const EMPTY_FILTERS: FilterState = {
+  search: '',
+  wifi_status: null,
+  charging_status: null,
+  noise_level: null,
+}
+
+/** Number of active filters, ignoring the free-text search box. */
+export function countActiveFilters(filters: FilterState): number {
+  return Object.entries(filters).filter(
+    ([key, value]) => key !== 'search' && value !== null
+  ).length
+}

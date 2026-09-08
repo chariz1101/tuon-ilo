@@ -128,7 +128,7 @@ export default function AddLocationForm({
 }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-5">
       {/* Name */}
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
@@ -146,7 +146,7 @@ export default function AddLocationForm({
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
@@ -191,7 +191,7 @@ export default function AddLocationForm({
       </div>
 
       {/* Wi-Fi / Charging */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label>Wi-Fi Status</Label>
           <Controller
@@ -199,7 +199,7 @@ export default function AddLocationForm({
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -218,7 +218,7 @@ export default function AddLocationForm({
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -240,7 +240,7 @@ export default function AddLocationForm({
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select noise level" />
               </SelectTrigger>
               <SelectContent>
@@ -254,56 +254,60 @@ export default function AddLocationForm({
       </div>
 
       {/* Pricing / Contact */}
-      <div className="space-y-2">
-        <Label htmlFor="pricing_details">Pricing Details</Label>
-        <Input
-          id="pricing_details"
-          {...register('pricing_details')}
-          placeholder="₱50/hr or Must buy a drink"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="contact_info">Contact Info</Label>
-        <Input
-          id="contact_info"
-          {...register('contact_info')}
-          placeholder="Phone number or contact person"
-        />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="pricing_details">Pricing Details</Label>
+          <Input
+            id="pricing_details"
+            {...register('pricing_details')}
+            placeholder="₱50/hr or Must buy a drink"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="contact_info">Contact Info</Label>
+          <Input
+            id="contact_info"
+            {...register('contact_info')}
+            placeholder="Phone number or contact person"
+          />
+        </div>
       </div>
 
       {/* Links */}
-      <div className="space-y-2">
-        <Label htmlFor="image_url">Image URL</Label>
-        <Input id="image_url" {...register('image_url')} placeholder="https://..." />
-        {errors.image_url && (
-          <p className="text-sm text-red-600">{errors.image_url.message}</p>
-        )}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="facebook_url">Facebook URL</Label>
-        <Input id="facebook_url" {...register('facebook_url')} placeholder="https://facebook.com/..." />
-        {errors.facebook_url && (
-          <p className="text-sm text-red-600">{errors.facebook_url.message}</p>
-        )}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="instagram_url">Instagram URL</Label>
-        <Input id="instagram_url" {...register('instagram_url')} placeholder="https://instagram.com/..." />
-        {errors.instagram_url && (
-          <p className="text-sm text-red-600">{errors.instagram_url.message}</p>
-        )}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="gmaps_url">Google Maps URL</Label>
-        <Input id="gmaps_url" {...register('gmaps_url')} placeholder="https://maps.google.com/..." />
-        {errors.gmaps_url && (
-          <p className="text-sm text-red-600">{errors.gmaps_url.message}</p>
-        )}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="image_url">Image URL</Label>
+          <Input id="image_url" {...register('image_url')} placeholder="https://..." />
+          {errors.image_url && (
+            <p className="text-sm text-red-600">{errors.image_url.message}</p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="facebook_url">Facebook URL</Label>
+          <Input id="facebook_url" {...register('facebook_url')} placeholder="https://facebook.com/..." />
+          {errors.facebook_url && (
+            <p className="text-sm text-red-600">{errors.facebook_url.message}</p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="instagram_url">Instagram URL</Label>
+          <Input id="instagram_url" {...register('instagram_url')} placeholder="https://instagram.com/..." />
+          {errors.instagram_url && (
+            <p className="text-sm text-red-600">{errors.instagram_url.message}</p>
+          )}
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="gmaps_url">Google Maps URL</Label>
+          <Input id="gmaps_url" {...register('gmaps_url')} placeholder="https://maps.google.com/..." />
+          {errors.gmaps_url && (
+            <p className="text-sm text-red-600">{errors.gmaps_url.message}</p>
+          )}
+        </div>
       </div>
 
       {/* 24 Hours toggle */}
-      <div className="flex items-center justify-between rounded-lg border p-4">
-        <div>
+      <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+        <div className="min-w-0">
           <Label htmlFor="is_24_hours">Open 24 Hours</Label>
           <p className="text-sm text-slate-500">
             Toggle on if this location never closes.
@@ -324,7 +328,7 @@ export default function AddLocationForm({
 
       {/* Opening / Closing time — hidden if 24 hours */}
       {!is24Hours && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="opening_time">Opening Time</Label>
             <Input id="opening_time" type="time" {...register('opening_time')} />
@@ -348,16 +352,16 @@ export default function AddLocationForm({
       )}
 
       <Button type="submit" disabled={submitting} className="w-full">
-  {submitting
-    ? isEditMode
-      ? 'Saving...'
-      : 'Adding...'
-    : isEditMode
-    ? 'Save Changes'
-    : isPublicSubmission
-    ? 'Submit for Review'
-    : 'Add Spot'}
-</Button>
+        {submitting
+          ? isEditMode
+            ? 'Saving...'
+            : 'Adding...'
+          : isEditMode
+            ? 'Save Changes'
+            : isPublicSubmission
+              ? 'Submit for Review'
+              : 'Add Spot'}
+      </Button>
     </form>
   )
 }

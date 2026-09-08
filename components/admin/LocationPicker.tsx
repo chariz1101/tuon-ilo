@@ -33,27 +33,30 @@ export default function LocationPicker({
 
   return (
     <div className="overflow-hidden rounded-lg border">
-      <Map
-        {...viewState}
-        onMove={(evt: { viewState: typeof viewState }) => setViewState(evt.viewState)}
-        onClick={handleMapClick}
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
-        style={{ width: '100%', height: '300px' }}
-      >
-        {latitude && longitude && (
-        <Marker
-            longitude={longitude}
-            latitude={latitude}
-            draggable
-            onDragEnd={handleMarkerDrag}
-            anchor="bottom"
+      <div className="h-56 w-full sm:h-72">
+        <Map
+          {...viewState}
+          onMove={(evt: { viewState: typeof viewState }) =>
+            setViewState(evt.viewState)
+          }
+          onClick={handleMapClick}
+          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+          mapStyle="mapbox://styles/mapbox/streets-v12"
+          style={{ width: '100%', height: '100%' }}
         >
-        </Marker>
-        )}
-      </Map>
+          {latitude && longitude && (
+            <Marker
+              longitude={longitude}
+              latitude={latitude}
+              draggable
+              onDragEnd={handleMarkerDrag}
+              anchor="bottom"
+            />
+          )}
+        </Map>
+      </div>
       <p className="bg-slate-50 px-3 py-2 text-xs text-slate-500">
-        Click anywhere on the map to drop a pin, or drag the pin to fine-tune its position.
+        Tap the map to drop a pin, or drag the pin to fine-tune its position.
       </p>
     </div>
   )

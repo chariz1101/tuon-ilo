@@ -30,7 +30,7 @@ export default function QueueItem({ location }: { location: Location }) {
       } else {
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       alert('Network error. Please check your connection and try again.')
     } finally {
       setLoading(null)
@@ -51,7 +51,7 @@ export default function QueueItem({ location }: { location: Location }) {
       } else {
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       alert('Network error. Please check your connection and try again.')
     } finally {
       setLoading(null)
@@ -61,19 +61,21 @@ export default function QueueItem({ location }: { location: Location }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base">{location.name}</CardTitle>
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="min-w-0 break-words text-base">
+            {location.name}
+          </CardTitle>
           <span
-            className={`rounded border px-2 py-0.5 text-xs ${locationTypeBadgeColor(
+            className={`shrink-0 rounded border px-2 py-0.5 text-xs whitespace-nowrap ${locationTypeBadgeColor(
               location.type
             )}`}
           >
-            {location.type}
+            {location.type === 'CAFE' ? 'Cafe' : 'Study Hub'}
           </span>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <span
             className={`rounded border px-2 py-0.5 text-xs ${amenityBadgeColor(
               location.wifi_status
@@ -90,7 +92,7 @@ export default function QueueItem({ location }: { location: Location }) {
           </span>
         </div>
 
-        <div className="text-sm text-slate-600">
+        <div className="space-y-1 text-sm text-slate-600 [&>p]:break-words">
           <p>
             📍 {location.latitude}, {location.longitude}
           </p>

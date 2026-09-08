@@ -1,379 +1,266 @@
 'use client'
+
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
-  Search,
-  Wifi,
-  BatteryCharging,
-  Volume1,
-  Volume2,
   X,
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
+  Search,
 } from 'lucide-react'
-import type { AmenityStatus, NoiseLevel, Location } from '@/types'
+import SpotSearch from '@/components/map/SpotSearch'
+import FilterControls, { FilterRail } from '@/components/map/FilterControls'
+import { EMPTY_FILTERS, countActiveFilters, type FilterState } from '@/types'
+import type { Location } from '@/types'
 
-export interface FilterState {
-  search: string
-  wifi_status: AmenityStatus | null
-  charging_status: AmenityStatus | null
-  noise_level: NoiseLevel | null
-}
+export type { FilterState }
 
 interface FilterBarProps {
   filters: FilterState
   onChange: (filters: FilterState) => void
   locations: Location[]
+  matchCount: number
   onSelectLocation: (location: Location) => void
   collapsed: boolean
   onToggleCollapse: () => void
 }
 
+/**
+ * Renders two layouts from one source of truth:
+ * - md and up: a collapsible sidebar next to the map.
+ * - below md: a floating search pill over the map plus a filter bottom sheet,
+ *   so the map keeps the full width of a phone screen.
+ */
 export default function FilterBar({
   filters,
   onChange,
   locations,
+  matchCount,
   onSelectLocation,
   collapsed,
   onToggleCollapse,
 }: FilterBarProps) {
-  const [searchFocused, setSearchFocused] = useState(false)
+  const [sheetOpen, setSheetOpen] = useState(false)
 
-  const matches =
-    filters.search.trim().length > 0
-      ? locations.filter((l) =>
-          l.name.toLowerCase().includes(filters.search.toLowerCase())
-        )
-      : locations
-  const visibleMatches = matches.slice(0, 8)
-  const showDropdown = searchFocused && locations.length > 0
-
-  function toggle<K extends keyof FilterState>(key: K, value: FilterState[K]) {
-    const isActive = filters[key] === value
-    onChange({ ...filters, [key]: isActive ? null : value })
-  }
-
-  function clearAll() {
-    onChange({
-      search: '',
-      wifi_status: null,
-      charging_status: null,
-      noise_level: null,
-    })
-  }
-
-  function expandThenRun(fn: () => void) {
-    if (collapsed) onToggleCollapse()
-    fn()
-  }
-
-  const activeCount = Object.entries(filters).filter(
-    ([k, v]) => k !== 'search' && v !== null
-  ).length
+  const activeCount = countActiveFilters(filters)
   const hasActiveFilters = filters.search !== '' || activeCount > 0
 
+  function clearAll() {
+    onChange(EMPTY_FILTERS)
+  }
+
+  function expandThenSearch() {
+    if (collapsed) onToggleCollapse()
+  }
+
   return (
-    <aside
-      className={`relative flex h-full shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-200 ${
-        collapsed ? 'w-16' : 'w-72'
-      }`}
-    >
-      {/* Header */}
-      <div
-        className={`flex items-center border-b border-slate-100 py-4 ${
-          collapsed ? 'justify-center px-2' : 'justify-between px-4'
+    <>
+      {/* ---------- Desktop sidebar ---------- */}
+      <aside
+        className={`relative hidden h-full shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 md:flex ${
+          collapsed ? 'w-16' : 'w-72 lg:w-80'
         }`}
       >
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center border-b border-slate-100 py-4 ${
+            collapsed ? 'justify-center px-2' : 'justify-between px-4'
+          }`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={collapsed ? '/logo-small.svg' : '/logo.svg'}
-            alt="Logo"
+            alt="Tuon.ILO"
             className="h-7 w-auto"
           />
+          {!collapsed && (
+            <button
+              onClick={onToggleCollapse}
+              className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          )}
         </div>
-        {!collapsed && (
+
+        {collapsed && (
           <button
             onClick={onToggleCollapse}
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Collapse sidebar"
+            className="mx-auto mt-2 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Expand sidebar"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" />
           </button>
-        )}
-      </div>
-
-      {/* Collapsed rail expand button */}
-      {collapsed && (
-        <button
-          onClick={onToggleCollapse}
-          className="mx-auto mt-2 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-          aria-label="Expand sidebar"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      )}
-
-      {/* Search */}
-      {collapsed ? (
-        <div className="flex justify-center border-b border-slate-100 py-3">
-          <button
-            onClick={() => expandThenRun(() => setSearchFocused(true))}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Search spots"
-            title="Search spots"
-          >
-            <Search className="h-4 w-4" />
-          </button>
-        </div>
-      ) : (
-        <div className="border-b border-slate-100 px-4 py-3">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={filters.search}
-              onChange={(e) => onChange({ ...filters, search: e.target.value })}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
-              placeholder="Search spots"
-              className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-8 text-sm outline-none placeholder:text-slate-400 focus:border-slate-400 focus:bg-white"
-              autoFocus={searchFocused}
-            />
-            {filters.search && (
-              <button
-                onMouseDown={() => onChange({ ...filters, search: '' })}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
-                aria-label="Clear search"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-
-            {showDropdown && (
-              <div className="absolute left-0 top-11 z-30 w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
-                {visibleMatches.length > 0 ? (
-                  <div className="max-h-72 overflow-y-auto">
-                    {visibleMatches.map((loc) => (
-                      <button
-                        key={loc.id}
-                        onMouseDown={() => {
-                          onSelectLocation(loc)
-                          onChange({ ...filters, search: loc.name })
-                          setSearchFocused(false)
-                        }}
-                        className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-slate-50"
-                      >
-                        <span className="text-sm font-medium text-slate-800">
-                          {loc.name}
-                        </span>
-                        <span className="text-xs text-slate-400">
-                          {loc.type === 'CAFE' ? 'Cafe' : 'Study Hub'}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="px-3 py-3 text-sm text-slate-400">
-                    No spots match &quot;{filters.search}&quot;
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-3' : 'px-4 py-4'}`}>
-        {!collapsed && (
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              Filters
-            </div>
-            {activeCount > 0 && (
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                {activeCount} active
-              </span>
-            )}
-          </div>
         )}
 
         {collapsed ? (
-          <div className="flex flex-col items-center gap-1.5">
-            <IconRailButton
-              active={filters.wifi_status === 'FREE'}
-              onClick={() => toggle('wifi_status', 'FREE')}
-              icon={<Wifi className="h-4 w-4" />}
-              label="Free Wi-Fi"
-            />
-            <IconRailButton
-              active={filters.charging_status === 'FREE'}
-              onClick={() => toggle('charging_status', 'FREE')}
-              icon={<BatteryCharging className="h-4 w-4" />}
-              label="Free Charging"
-            />
-            <div className="my-1 h-px w-8 bg-slate-100" />
-            <IconRailButton
-              active={filters.noise_level === 'QUIET'}
-              onClick={() => toggle('noise_level', 'QUIET')}
-              icon={<Volume1 className="h-4 w-4" />}
-              label="Quiet"
-            />
-            <IconRailButton
-              active={filters.noise_level === 'MODERATE'}
-              onClick={() => toggle('noise_level', 'MODERATE')}
-              icon={<Volume1 className="h-4 w-4" />}
-              label="Moderate"
-            />
-            <IconRailButton
-              active={filters.noise_level === 'LIVELY'}
-              onClick={() => toggle('noise_level', 'LIVELY')}
-              icon={<Volume2 className="h-4 w-4" />}
-              label="Lively"
-            />
+          <div className="flex justify-center border-b border-slate-100 py-3">
+            <button
+              onClick={expandThenSearch}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              aria-label="Search spots"
+              title="Search spots"
+            >
+              <Search className="h-4 w-4" />
+            </button>
           </div>
         ) : (
-          <>
-            <FilterGroup label="Amenities">
-              <FilterRow
-                active={filters.wifi_status === 'FREE'}
-                onClick={() => toggle('wifi_status', 'FREE')}
-                icon={<Wifi className="h-4 w-4" />}
-                label="Free Wi-Fi"
-              />
-              <FilterRow
-                active={filters.charging_status === 'FREE'}
-                onClick={() => toggle('charging_status', 'FREE')}
-                icon={<BatteryCharging className="h-4 w-4" />}
-                label="Free Charging"
-              />
-            </FilterGroup>
-
-            <FilterGroup label="Atmosphere">
-              <FilterRow
-                active={filters.noise_level === 'QUIET'}
-                onClick={() => toggle('noise_level', 'QUIET')}
-                icon={<Volume1 className="h-4 w-4" />}
-                label="Quiet"
-              />
-              <FilterRow
-                active={filters.noise_level === 'MODERATE'}
-                onClick={() => toggle('noise_level', 'MODERATE')}
-                icon={<Volume1 className="h-4 w-4" />}
-                label="Moderate"
-              />
-              <FilterRow
-                active={filters.noise_level === 'LIVELY'}
-                onClick={() => toggle('noise_level', 'LIVELY')}
-                icon={<Volume2 className="h-4 w-4" />}
-                label="Lively"
-              />
-            </FilterGroup>
-
-            <div className="mt-2 text-xs text-slate-400">
-              {matches.length} of {locations.length} spots match
-            </div>
-          </>
+          <div className="border-b border-slate-100 px-4 py-3">
+            <SpotSearch
+              value={filters.search}
+              onValueChange={(search) => onChange({ ...filters, search })}
+              locations={locations}
+              onSelectLocation={onSelectLocation}
+            />
+          </div>
         )}
-      </div>
 
-      {/* Footer */}
-      {hasActiveFilters && !collapsed && (
-        <div className="border-t border-slate-100 px-4 py-3">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={clearAll}
-            className="w-full justify-center rounded-lg text-slate-500 hover:bg-slate-100"
-          >
-            <X className="mr-1.5 h-4 w-4" />
-            Clear all filters
-          </Button>
+        <div
+          className={`flex-1 overflow-y-auto ${collapsed ? 'px-2 py-3' : 'px-4 py-4'}`}
+        >
+          {collapsed ? (
+            <FilterRail filters={filters} onChange={onChange} />
+          ) : (
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  Filters
+                </div>
+                {activeCount > 0 && (
+                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                    {activeCount} active
+                  </span>
+                )}
+              </div>
+
+              <FilterControls filters={filters} onChange={onChange} />
+
+              <p className="mt-4 text-xs text-slate-400">
+                {matchCount} of {locations.length} spots match
+              </p>
+            </>
+          )}
         </div>
-      )}
-      {hasActiveFilters && collapsed && (
-        <div className="flex justify-center border-t border-slate-100 py-3">
+
+        {hasActiveFilters &&
+          (collapsed ? (
+            <div className="flex justify-center border-t border-slate-100 py-3">
+              <button
+                onClick={clearAll}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                aria-label="Clear all filters"
+                title="Clear all filters"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="border-t border-slate-100 px-4 py-3">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={clearAll}
+                className="w-full justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+              >
+                <X className="mr-1.5 h-4 w-4" />
+                Clear all filters
+              </Button>
+            </div>
+          ))}
+      </aside>
+
+      {/* ---------- Mobile top bar ---------- */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-30 md:hidden">
+        <div className="pointer-events-auto flex items-start gap-2 px-3 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))]">
+          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-white py-1 pl-3 pr-1 shadow-lg ring-1 ring-black/5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-small.svg"
+              alt="Tuon.ILO"
+              className="h-6 w-6 shrink-0"
+            />
+            <SpotSearch
+              value={filters.search}
+              onValueChange={(search) => onChange({ ...filters, search })}
+              locations={locations}
+              onSelectLocation={onSelectLocation}
+              className="min-w-0 flex-1"
+              inputClassName="h-10 rounded-full border-0 bg-transparent pl-9 focus:bg-transparent"
+            />
+          </div>
+
           <button
-            onClick={clearAll}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Clear all filters"
-            title="Clear all filters"
+            onClick={() => setSheetOpen(true)}
+            className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 shadow-lg ring-1 ring-black/5 active:bg-slate-50"
+            aria-label={`Filters${activeCount > 0 ? `, ${activeCount} active` : ''}`}
           >
-            <X className="h-4 w-4" />
+            <SlidersHorizontal className="h-5 w-5" />
+            {activeCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-semibold text-white">
+                {activeCount}
+              </span>
+            )}
           </button>
         </div>
+      </div>
+
+      {/* ---------- Mobile filter sheet ---------- */}
+      {sheetOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-slate-900/40 animate-in fade-in duration-150"
+            onClick={() => setSheetOpen(false)}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filters"
+            className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl bg-white shadow-2xl animate-in slide-in-from-bottom duration-200"
+          >
+            <div className="shrink-0 px-4 pt-3">
+              <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200" />
+              <div className="mt-3 flex items-center justify-between">
+                <h2 className="text-base font-semibold">Filters</h2>
+                <button
+                  onClick={() => setSheetOpen(false)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+                  aria-label="Close filters"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+              <FilterControls filters={filters} onChange={onChange} />
+            </div>
+
+            <div className="shrink-0 border-t border-slate-100 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+              <div className="flex items-center gap-3">
+                <p className="flex-1 text-xs text-slate-400">
+                  {matchCount} of {locations.length} spots match
+                </p>
+                {hasActiveFilters && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={clearAll}
+                    className="text-slate-500"
+                  >
+                    <X className="mr-1.5 h-4 w-4" />
+                    Clear all
+                  </Button>
+                )}
+                <Button size="sm" onClick={() => setSheetOpen(false)}>
+                  Show {matchCount}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-    </aside>
-  )
-}
-
-function FilterGroup({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="mb-5">
-      <div className="mb-2 text-xs font-medium text-slate-400">{label}</div>
-      <div className="flex flex-col gap-1">{children}</div>
-    </div>
-  )
-}
-
-function FilterRow({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean
-  onClick: () => void
-  icon: React.ReactNode
-  label: string
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors ${
-        active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100'
-      }`}
-    >
-      <span className={active ? 'text-white' : 'text-slate-400'}>{icon}</span>
-      {label}
-      {active && (
-        <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[10px]">
-          ✓
-        </span>
-      )}
-    </button>
-  )
-}
-
-function IconRailButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean
-  onClick: () => void
-  icon: React.ReactNode
-  label: string
-}) {
-  return (
-    <button
-      onClick={onClick}
-      title={label}
-      aria-label={label}
-      className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
-        active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
-      }`}
-    >
-      {icon}
-    </button>
+    </>
   )
 }

@@ -50,6 +50,8 @@
 }
 
 :root {
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -124,8 +126,34 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Stops iOS Safari from rubber-banding the whole page behind the map. */
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
   }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+/*
+ * The shadcn controls are sized for a mouse (h-8 / 32px). On touch screens that
+ * is well under a comfortable tap target, so give them more room on phones.
+ */
+@media (max-width: 639px) {
+  [data-slot='input'],
+  [data-slot='select-trigger'] {
+    min-height: 2.75rem;
+  }
+  [data-slot='button'] {
+    min-height: 2.5rem;
+  }
+}
+
+/* Keep the Mapbox logo and attribution clear of the floating mobile controls. */
+@media (max-width: 767px) {
+  .mapboxgl-ctrl-bottom-left,
+  .mapboxgl-ctrl-bottom-right {
+    margin-bottom: env(safe-area-inset-bottom);
   }
 }
