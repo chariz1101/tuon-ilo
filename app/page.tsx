@@ -2,9 +2,9 @@
 import { useEffect, useState, useMemo } from 'react'
 import MapView from '@/components/map/MapView'
 import LocationCard from '@/components/location/LocationCard'
-import FilterBar, { type FilterState } from '@/components/map/FilterBar'
+import FilterBar from '@/components/map/FilterBar'
 import { supabase } from '@/lib/supabase'
-import type { Location } from '@/types'
+import { EMPTY_FILTERS, type FilterState, type Location } from '@/types'
 import { Plus } from 'lucide-react'
 import SubmitSpotModal from '@/components/location/SubmitSpotModal'
 import { Analytics } from '@vercel/analytics/react'
@@ -15,18 +15,8 @@ export default function Home() {
   const [error, setError] = useState('')
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [collapsed, setCollapsed] = useState(false)
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    wifi_status: null,
-    charging_status: null,
-    noise_level: null,
-  })
+  const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS)
   const [submitModalOpen, setSubmitModalOpen] = useState(false)
-
-  // Start collapsed on small screens so the sidebar doesn't eat the map
-  useEffect(() => {
-    if (window.innerWidth < 640) setCollapsed(true)
-  }, [])
 
   useEffect(() => {
     async function fetchLocations() {
@@ -65,25 +55,30 @@ export default function Home() {
   }, [allLocations, filters])
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="relative flex h-dvh w-full overflow-hidden">
       <FilterBar
         filters={filters}
         onChange={setFilters}
         locations={allLocations}
+        matchCount={filteredLocations.length}
         onSelectLocation={setSelectedLocation}
         collapsed={collapsed}
         onToggleCollapse={() => setCollapsed((v) => !v)}
       />
 
-      <div className="relative h-full flex-1 overflow-hidden">
-        {loading && (
-          <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 text-sm shadow">
-            Loading spots...
-          </div>
-        )}
-        {error && (
-          <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full bg-red-50 px-4 py-2 text-sm text-red-600 shadow">
-            Failed to load spots: {error}
+      <div className="relative h-full min-w-0 flex-1 overflow-hidden">
+        {(loading || error) && (
+          <div className="pointer-events-none absolute inset-x-0 top-20 z-20 flex justify-center px-4 md:top-4">
+            {loading && (
+              <p className="rounded-full bg-white px-4 py-2 text-sm shadow-md">
+                Loading spots...
+              </p>
+            )}
+            {error && (
+              <p className="max-w-full truncate rounded-full bg-red-50 px-4 py-2 text-sm text-red-600 shadow-md">
+                Failed to load spots: {error}
+              </p>
+            )}
           </div>
         )}
 
@@ -92,23 +87,28 @@ export default function Home() {
           onSelectLocation={setSelectedLocation}
         />
 
-        {selectedLocation && (
-          <div className="absolute right-0 top-0 z-20 h-full w-full max-w-sm overflow-y-auto bg-white shadow-xl sm:right-4 sm:top-4 sm:h-[calc(100%-2rem)] sm:rounded-lg">
-            <LocationCard
-              location={selectedLocation}
-              onClose={() => setSelectedLocation(null)}
-            />
-          </div>
-        )}
-
         <button
           onClick={() => setSubmitModalOpen(true)}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-slate-800"
+          className={`fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-4 z-30 items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-slate-800 md:absolute md:bottom-6 md:right-6 ${
+            selectedLocation ? 'hidden xl:inline-flex' : 'inline-flex'
+          }`}
         >
           <Plus className="h-4 w-4" />
           Submit a Spot
         </button>
       </div>
+
+      {selectedLocation && (
+        // Three treatments, so the map always keeps usable width:
+        // phone — bottom sheet; tablet — floating panel over the map;
+        // xl and up — a docked third column beside the map.
+        <div className="fixed inset-x-0 bottom-0 z-40 flex max-h-[85dvh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl animate-in slide-in-from-bottom duration-200 md:absolute md:inset-x-auto md:bottom-4 md:right-4 md:top-4 md:z-20 md:max-h-none md:w-80 md:rounded-xl md:animate-none lg:w-[22rem] xl:static xl:z-auto xl:h-full xl:w-96 xl:shrink-0 xl:rounded-none xl:border-l xl:border-slate-200 xl:shadow-none">
+          <LocationCard
+            location={selectedLocation}
+            onClose={() => setSelectedLocation(null)}
+          />
+        </div>
+      )}
 
       <SubmitSpotModal
         open={submitModalOpen}

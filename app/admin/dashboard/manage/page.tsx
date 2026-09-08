@@ -14,10 +14,10 @@ export default async function ManagePage() {
   const liveLocations = (data ?? []) as Location[]
 
   return (
-    <main className="px-6 py-10">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="mb-1 text-2xl font-semibold">Manage Spots</h1>
-        <p className="mb-8 text-slate-600">
+    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <div>
+        <h1 className="mb-1 text-xl font-semibold sm:text-2xl">Manage Spots</h1>
+        <p className="mb-6 text-sm text-slate-600 sm:mb-8 sm:text-base">
           Edit or remove locations that are currently live on the map.
         </p>
 

@@ -18,13 +18,27 @@ export default function MapView({ locations, onSelectLocation }: MapViewProps) {
     zoom: 13,
   })
 
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+  if (!mapboxToken) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-slate-100 p-6">
+        <p className="max-w-xs text-center text-sm text-slate-500">
+          The map can&apos;t be shown right now — no Mapbox token is configured.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <Map
       {...viewState}
       onMove={(evt) => setViewState(evt.viewState)}
-      mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+      mapboxAccessToken={mapboxToken}
       mapStyle="mapbox://styles/mapbox/streets-v12"
-      style={{ width: '100%', height: '100vh' }}
+      // Fills the positioned parent rather than the viewport, so the map never
+      // runs past the bottom of a phone screen or under the sidebar.
+      style={{ width: '100%', height: '100%' }}
     >
       {locations.map((location) => (
         <Marker
